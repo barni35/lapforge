@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>LapForge</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@300;400;600;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0b;
+    --surface: #111114;
+    --surface2: #1a1a1f;
+    --border: #2a2a32;
+    --accent: #e8ff47;
+    --accent2: #ff4747;
+    --accent3: #47aaff;
+    --text: #f0f0f0;
+    --muted: #666672;
+    --green: #39ff85;
+    --orange: #ff8c42;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body { width:100%; height:100%; overflow:hidden; background:var(--bg); color:var(--text); font-family:'Barlow Condensed', sans-serif; }
+
+  /* ── SCREENS ── */
+  .screen { position:absolute; inset:0; display:none; flex-direction:column; }
+  .screen.active { display:flex; }
+
+  /* ── BOOT / HOME ── */
+  #home {
+    background: var(--bg);
+    align-items:center; justify-content:center;
+    gap:0;
+  }
+  .logo-block { text-align:center; margin-bottom:40px; }
+  .logo-mark {
+    width:72px; height:72px; margin:0 auto 12px;
+    border:3px solid var(--accent);
+    display:flex; align-items:center; justify-content:center;
+    transform:rotate(45deg);
+  }
+  .logo-mark-inner {
+    width:28px; height:28px; background:var(--accent);
+    transform:rotate(0deg);
+  }
+  .logo-name { font-size:48px; font-weight:900; letter-spacing:4px; color:var(--accent); line-height:1; }
+  .logo-sub { font-size:14px; font-weight:400; letter-spacing:6px; color:var(--muted); margin-top:6px; }
+
+  .home-actions { display:flex; flex-direction:column; gap:14px; width:100%; max-width:320px; padding:0 24px; }
+  .btn-primary {
+    background:var(--accent); color:#000; border:none;
+    font-family:'Barlow Condensed',sans-serif; font-size:22px; font-weight:700; letter-spacing:3px;
+    padding:18px; cursor:pointer; text-transform:uppercase;
+    transition:all .15s; clip-path:polygon(0 0,calc(100% - 12px) 0,100% 12px,100% 100%,12px 100%,0 calc(100% - 12px));
+  }
+  .btn-primary:active { transform:scale(.97); }
+  .btn-secondary {
+    background:transparent; color:var(--muted); border:1px solid var(--border);
+    font-family:'Barlow Condensed',sans-serif; font-size:18px; font-weight:600; letter-spacing:2px;
+    padding:14px; cursor:pointer; text-transform:uppercase;
+    transition:all .15s;
+  }
+  .btn-secondary:active { border-color:var(--accent); color:var(--accent); }
+
+  .gps-status-bar {
+    position:absolute; bottom:0; left:0; right:0;
+    background:var(--surface); border-top:1px solid var(--border);
+    padding:10px 20px; display:flex; align-items:center; gap:10px;
+    font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--muted);
+  }
+  .gps-dot { width:8px; height:8px; border-radius:50%; background:var(--muted); flex-shrink:0; }
+  .gps-dot.good { background:var(--green); box-shadow:0 0 6px var(--green); animation:pulse 2s infinite; }
+  .gps-dot.ok { background:var(--orange); }
+  .gps-dot.bad { background:var(--accent2); }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
+
+  /* ── SETUP LINE ── */
+  #setup {
+    background:var(--bg);
+  }
+  .screen-header {
+    background:var(--surface); border-bottom:1px solid var(--border);
+    padding:16px 20px; display:flex; align-items:center; gap:16px;
+  }
+  .back-btn {
+    background:none; border:1px solid var(--border); color:var(--muted);
+    font-family:'Barlow Condensed',sans-serif; font-size:14px; font-weight:600; letter-spacing:1px;
+    padding:6px 12px; cursor:pointer; text-transform:uppercase;
+  }
+  .screen-title { font-size:24px; font-weight:700; letter-spacing:2px; color:var(--accent); }
+
+  .setup-body { flex:1; display:flex; flex-direction:column; padding:20px; gap:16px; overflow-y:auto; }
+
+  .info-card {
+    background:var(--surface); border:1px solid var(--border);
+    padding:16px; border-left:3px solid var(--accent3);
+  }
+  .info-card p { font-size:16px; color:var(--muted); line-height:1.5; font-family:'Barlow Condensed',sans-serif; font-weight:400; letter-spacing:.5px; }
+  .info-card strong { color:var(--text); font-weight:600; }
+
+  .coord-display {
+    background:var(--surface2); border:1px solid var(--border);
+    padding:16px;
+  }
+  .coord-label { font-size:11px; font-weight:600; letter-spacing:3px; color:var(--muted); text-transform:uppercase; margin-bottom:8px; }
+  .coord-value { font-family:'JetBrains Mono',monospace; font-size:15px; color:var(--green); }
+  .coord-value.pending { color:var(--muted); }
+
+  .btn-set-line {
+    background:var(--accent); color:#000; border:none;
+    font-family:'Barlow Condensed',sans-serif; font-size:20px; font-weight:700; letter-spacing:3px;
+    padding:18px; cursor:pointer; text-transform:uppercase;
+    clip-path:polygon(0 0,calc(100% - 10px) 0,100% 10px,100% 100%,10px 100%,0 calc(100% - 10px));
+    transition:all .15s;
+  }
+  .btn-set-line:disabled { background:var(--border); color:var(--muted); cursor:not-allowed; clip-path:none; }
+  .btn-set-line:not(:disabled):active { transform:scale(.97); }
+
+  .manual-section { border-top:1px solid var(--border); padding-top:16px; }
+  .section-label { font-size:13px; font-weight:600; letter-spacing:3px; color:var(--muted); text-transform:uppercase; margin-bottom:12px; }
+  .input-row { display:flex; gap:10px; }
+  .coord-input {
+    flex:1; background:var(--surface2); border:1px solid var(--border); color:var(--text);
+    font-family:'JetBrains Mono',monospace; font-size:14px;
+    padding:10px 12px; outline:none;
+  }
+  .coord-input:focus { border-color:var(--accent3); }
+  .btn-manual {
+    background:var(--surface2); color:var(--accent3); border:1px solid var(--accent3);
+    font-family:'Barlow Condensed',sans-serif; font-size:16px; font-weight:700; letter-spacing:2px;
+    padding:10px 16px; cursor:pointer; text-transform:uppercase;
+  }
+
+  /* ── RACE SCREEN ── */
+  #race { background:var(--bg); }
+
+  .race-header {
+    background:var(--surface); border-bottom:1px solid var(--border);
+    padding:10px 16px; display:flex; align-items:center; justify-content:space-between;
+  }
+  .race-title { font-size:18px; font-weight:700; letter-spacing:2px; color:var(--muted); }
+  .btn-stop {
+    background:var(--accent2); color:#fff; border:none;
+    font-family:'Barlow Condensed',sans-serif; font-size:14px; font-weight:700; letter-spacing:2px;
+    padding:8px 16px; cursor:pointer; text-transform:uppercase;
+  }
+
+  /* big timer */
+  .timer-block {
+    background:var(--surface); border-bottom:1px solid var(--border);
+    padding:20px 16px 16px; text-align:center;
+  }
+  .timer-label { font-size:11px; font-weight:600; letter-spacing:4px; color:var(--muted); text-transform:uppercase; margin-bottom:4px; }
+  .timer-value {
+    font-family:'JetBrains Mono',monospace; font-size:72px; font-weight:700; line-height:1;
+    color:var(--accent); letter-spacing:-2px;
+    transition:color .3s;
+  }
+  .timer-value.crossed { color:var(--green); }
+  .lap-count { font-size:16px; color:var(--muted); margin-top:4px; letter-spacing:2px; }
+
+  /* metrics row */
+  .metrics-row {
+    display:grid; grid-template-columns:1fr 1fr 1fr;
+    border-bottom:1px solid var(--border);
+  }
+  .metric {
+    padding:14px 10px; text-align:center; border-right:1px solid var(--border);
+  }
+  .metric:last-child { border-right:none; }
+  .metric-label { font-size:10px; font-weight:600; letter-spacing:3px; color:var(--muted); text-transform:uppercase; margin-bottom:4px; }
+  .metric-value { font-family:'JetBrains Mono',monospace; font-size:22px; font-weight:700; color:var(--text); }
+  .metric-value.best { color:var(--green); }
+  .metric-value.speed { color:var(--accent3); }
+
+  /* lap list */
+  .lap-list { flex:1; overflow-y:auto; }
+  .lap-list-header {
+    display:grid; grid-template-columns:48px 1fr 1fr 1fr;
+    padding:8px 16px; background:var(--surface2);
+    border-bottom:1px solid var(--border);
+  }
+  .lap-list-header span { font-size:10px; font-weight:600; letter-spacing:2px; color:var(--muted); text-transform:uppercase; }
+  .lap-row {
+    display:grid; grid-template-columns:48px 1fr 1fr 1fr;
+    padding:12px 16px; border-bottom:1px solid var(--border);
+    font-family:'JetBrains Mono',monospace; font-size:15px;
+    animation:fadeIn .3s ease;
+  }
+  @keyframes fadeIn { from{opacity:0;transform:translateY(-8px)} to{opacity:1;transform:none} }
+  .lap-row.best-lap { background:rgba(57,255,133,.06); border-left:3px solid var(--green); }
+  .lap-row.best-lap .lap-time { color:var(--green); font-weight:700; }
+  .lap-num { color:var(--muted); }
+  .lap-time { color:var(--text); }
+  .lap-delta { font-size:13px; }
+  .lap-delta.pos { color:var(--accent2); }
+  .lap-delta.neg { color:var(--green); }
+  .lap-speed { color:var(--muted); font-size:13px; }
+
+  /* status strip */
+  .status-strip {
+    background:var(--surface); border-top:1px solid var(--border);
+    padding:8px 16px; display:flex; align-items:center; gap:12px;
+    font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--muted);
+  }
+  .status-item { display:flex; align-items:center; gap:6px; }
+  .status-dot { width:6px; height:6px; border-radius:50%; }
+
+  /* cross flash */
+  .cross-flash {
+    position:absolute; inset:0; background:var(--accent);
+    opacity:0; pointer-events:none; z-index:100;
+    transition:opacity .1s;
+  }
+  .cross-flash.show { opacity:.15; }
+
+  /* ── RESULTS ── */
+  #results { background:var(--bg); }
+  .results-body { flex:1; overflow-y:auto; padding:20px; display:flex; flex-direction:column; gap:16px; }
+  .results-hero { text-align:center; padding:24px 0; border-bottom:1px solid var(--border); }
+  .results-laps { display:flex; flex-direction:column; gap:8px; }
+  .result-row {
+    background:var(--surface); border:1px solid var(--border);
+    display:grid; grid-template-columns:48px 1fr 1fr;
+    padding:12px 16px; font-family:'JetBrains Mono',monospace; font-size:15px;
+    animation:fadeIn .3s ease;
+  }
+  .result-row.best { border-color:var(--green); background:rgba(57,255,133,.05); }
+  .results-actions { display:flex; gap:12px; }
+  .btn-results {
+    flex:1; background:var(--surface); border:1px solid var(--border); color:var(--text);
+    font-family:'Barlow Condensed',sans-serif; font-size:18px; font-weight:600; letter-spacing:2px;
+    padding:16px; cursor:pointer; text-transform:uppercase;
+  }
+  .btn-results.primary { background:var(--accent); color:#000; border-color:var(--accent); }
+</style>
+</head>
+<body>
+
+<!-- ── HOME ── -->
+<div id="home" class="screen active">
+  <div class="logo-block" style="margin-top:-40px">
+    <div class="logo-mark"><div class="logo-mark-inner"></div></div>
+    <div class="logo-name">LAPFORGE</div>
+    <div class="logo-sub">GPS LAP TIMER</div>
+  </div>
+  <div class="home-actions">
+    <button class="btn-primary" onclick="goSetup()">SET START LINE</button>
+    <button class="btn-secondary" id="btn-quick-start" onclick="quickStart()" disabled>QUICK START (LAST LINE)</button>
+    <button class="btn-secondary" onclick="goResults()">VIEW LAST SESSION</button>
+  </div>
+  <div class="gps-status-bar">
+    <div class="gps-dot" id="home-gps-dot"></div>
+    <span id="home-gps-text">Acquiring GPS...</span>
+  </div>
+</div>
+
+<!-- ── SETUP ── -->
+<div id="setup" class="screen">
+  <div class="screen-header">
+    <button class="back-btn" onclick="showScreen('home')">&#8592; Back</button>
+    <div class="screen-title">START LINE</div>
+  </div>
+  <div class="setup-body">
+    <div class="info-card">
+      <p>Drive to your <strong>start/finish line</strong> and tap the button below. LapForge will draw a perpendicular virtual line at your current position and heading.</p>
+    </div>
+
+    <div class="coord-display">
+      <div class="coord-label">Current GPS Position</div>
+      <div class="coord-value pending" id="setup-coords">Waiting for GPS fix...</div>
+    </div>
+
+    <div class="coord-display">
+      <div class="coord-label">GPS Accuracy</div>
+      <div class="coord-value pending" id="setup-accuracy">—</div>
+    </div>
+
+    <button class="btn-set-line" id="btn-set-line" disabled onclick="setStartLine()">
+      DROP START LINE HERE
+    </button>
+
+    <div class="manual-section">
+      <div class="section-label">Or enter coordinates manually</div>
+      <div class="input-row">
+        <input class="coord-input" id="manual-lat" placeholder="Latitude" type="number" step="any">
+        <input class="coord-input" id="manual-lon" placeholder="Longitude" type="number" step="any">
+        <button class="btn-manual" onclick="setManualLine()">SET</button>
+      </div>
+    </div>
+  </div>
+  <div class="gps-status-bar">
+    <div class="gps-dot" id="setup-gps-dot"></div>
+    <span id="setup-gps-text">Acquiring GPS...</span>
+  </div>
+</div>
+
+<!-- ── RACE ── -->
+<div id="race" class="screen">
+  <div class="cross-flash" id="cross-flash"></div>
+
+  <div class="race-header">
+    <div class="race-title">LAPFORGE · RACING</div>
+    <button class="btn-stop" onclick="stopSession()">END SESSION</button>
+  </div>
+
+  <div class="timer-block">
+    <div class="timer-label">Current Lap</div>
+    <div class="timer-value" id="timer-display">0:00.000</div>
+    <div class="lap-count" id="lap-count-display">LAP 1 · WAITING FOR CROSSING</div>
+  </div>
+
+  <div class="metrics-row">
+    <div class="metric">
+      <div class="metric-label">Best Lap</div>
+      <div class="metric-value best" id="best-lap-display">—</div>
+    </div>
+    <div class="metric">
+      <div class="metric-label">Speed</div>
+      <div class="metric-value speed" id="speed-display">0 <span style="font-size:13px;color:var(--muted)">km/h</span></div>
+    </div>
+    <div class="metric">
+      <div class="metric-label">Delta</div>
+      <div class="metric-value" id="delta-display" style="color:var(--muted)">—</div>
+    </div>
+  </div>
+
+  <div class="lap-list">
+    <div class="lap-list-header">
+      <span>Lap</span>
+      <span>Time</span>
+      <span>Delta</span>
+      <span>Km/h</span>
+    </div>
+    <div id="lap-rows"></div>
+  </div>
+
+  <div class="status-strip">
+    <div class="status-item">
+      <div class="status-dot" id="race-gps-dot" style="background:var(--muted)"></div>
+      <span id="race-gps-text">GPS</span>
+    </div>
+    <div class="status-item">
+      <div class="status-dot" id="line-dot" style="background:var(--green)"></div>
+      <span id="line-info">Line set</span>
+    </div>
+    <span id="race-coords" style="margin-left:auto"></span>
+  </div>
+</div>
+
+<!-- ── RESULTS ── -->
+<div id="results" class="screen">
+  <div class="screen-header">
+    <button class="back-btn" onclick="showScreen('home')">&#8592; Home</button>
+    <div class="screen-title">SESSION</div>
+  </div>
+  <div class="results-body">
+    <div class="results-hero" id="results-hero">
+      <div style="font-size:11px;letter-spacing:4px;color:var(--muted);text-transform:uppercase;margin-bottom:8px">Best Lap</div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:56px;font-weight:700;color:var(--green)" id="results-best">—</div>
+      <div style="font-size:14px;color:var(--muted);margin-top:6px;letter-spacing:2px" id="results-summary"></div>
+    </div>
+    <div class="results-laps" id="results-laps"></div>
+    <div class="results-actions">
+      <button class="btn-results" onclick="clearSession()">CLEAR</button>
+      <button class="btn-results primary" onclick="goSetup()">NEW SESSION</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── STATE ──
+let state = {
+  gpsPos: null,           // {lat, lon, heading, speed, accuracy}
+  prevPos: null,
+  startLine: null,        // {lat, lon, bearing} — centre point + perpendicular bearing
+  lineP1: null,           // computed line endpoint 1
+  lineP2: null,           // computed line endpoint 2
+  sessionActive: false,
+  lapStartTime: null,
+  currentLapNum: 1,
+  laps: [],               // [{num, time, speed, delta}]
+  bestLap: null,
+  timerInterval: null,
+  watchId: null,
+  hasCrossed: false,      // first crossing detection guard
+};
+
+// Persist last line
+function saveLastLine() {
+  if (state.startLine) {
+    localStorage.setItem('lapforge_line', JSON.stringify({
+      line: state.startLine,
+      p1: state.lineP1,
+      p2: state.lineP2
+    }));
+  }
+}
+function loadLastLine() {
+  try {
+    const d = JSON.parse(localStorage.getItem('lapforge_line'));
+    if (d) { state.startLine = d.line; state.lineP1 = d.p1; state.lineP2 = d.p2; return true; }
+  } catch(e) {}
+  return false;
+}
+
+// ── GPS ──
+function startGPS() {
+  if (!navigator.geolocation) { updateGPSUI('error', 'GPS not available'); return; }
+  state.watchId = navigator.geolocation.watchPosition(onGPS, onGPSError, {
+    enableHighAccuracy: true, maximumAge: 500, timeout: 10000
+  });
+}
+
+function onGPS(pos) {
+  const p = {
+    lat: pos.coords.latitude,
+    lon: pos.coords.longitude,
+    speed: pos.coords.speed != null ? pos.coords.speed * 3.6 : null, // m/s → km/h
+    heading: pos.coords.heading,
+    accuracy: pos.coords.accuracy
+  };
+  state.prevPos = state.gpsPos;
+  state.gpsPos = p;
+
+  const acc = p.accuracy;
+  const quality = acc < 10 ? 'good' : acc < 30 ? 'ok' : 'bad';
+  const label = `GPS · ±${Math.round(acc)}m`;
+  updateGPSUI(quality, label);
+
+  // Setup screen
+  const coordEl = document.getElementById('setup-coords');
+  const accEl = document.getElementById('setup-accuracy');
+  if (coordEl) {
+    coordEl.textContent = `${p.lat.toFixed(6)}, ${p.lon.toFixed(6)}`;
+    coordEl.classList.remove('pending');
+  }
+  if (accEl) {
+    accEl.textContent = `±${Math.round(acc)} metres`;
+    accEl.className = 'coord-value ' + (acc < 15 ? '' : 'pending');
+  }
+  const setBtn = document.getElementById('btn-set-line');
+  if (setBtn) setBtn.disabled = acc > 50;
+
+  // Race screen updates
+  if (state.sessionActive) {
+    const spd = p.speed != null ? Math.round(p.speed) : '—';
+    document.getElementById('speed-display').innerHTML = `${spd} <span style="font-size:13px;color:var(--muted)">km/h</span>`;
+    document.getElementById('race-coords').textContent = `${p.lat.toFixed(4)}, ${p.lon.toFixed(4)}`;
+
+    if (state.startLine && state.prevPos) {
+      checkLineCrossing(state.prevPos, p);
+    }
+  }
+}
+
+function onGPSError(err) {
+  updateGPSUI('bad', 'GPS error: ' + err.message);
+}
+
+function updateGPSUI(quality, label) {
+  ['home','setup','race'].forEach(id => {
+    const dot = document.getElementById(id+'-gps-dot');
+    const txt = document.getElementById(id+'-gps-text');
+    if (dot) { dot.className = 'gps-dot ' + quality; }
+    if (txt) txt.textContent = label;
+  });
+  const raceDot = document.getElementById('race-gps-dot');
+  if (raceDot) {
+    raceDot.style.background = quality === 'good' ? 'var(--green)' : quality === 'ok' ? 'var(--orange)' : 'var(--accent2)';
+  }
+}
+
+// ── MATH ──
+const R = 6371000; // Earth radius metres
+
+function toRad(d) { return d * Math.PI / 180; }
+function toDeg(r) { return r * 180 / Math.PI; }
+
+function bearing(lat1, lon1, lat2, lon2) {
+  const φ1=toRad(lat1), φ2=toRad(lat2), Δλ=toRad(lon2-lon1);
+  const y = Math.sin(Δλ)*Math.cos(φ2);
+  const x = Math.cos(φ1)*Math.sin(φ2) - Math.sin(φ1)*Math.cos(φ2)*Math.cos(Δλ);
+  return (toDeg(Math.atan2(y,x)) + 360) % 360;
+}
+
+function destPoint(lat, lon, bearingDeg, distM) {
+  const δ = distM / R;
+  const θ = toRad(bearingDeg);
+  const φ1 = toRad(lat), λ1 = toRad(lon);
+  const φ2 = Math.asin(Math.sin(φ1)*Math.cos(δ) + Math.cos(φ1)*Math.sin(δ)*Math.cos(θ));
+  const λ2 = λ1 + Math.atan2(Math.sin(θ)*Math.sin(δ)*Math.cos(φ1), Math.cos(δ)-Math.sin(φ1)*Math.sin(φ2));
+  return { lat: toDeg(φ2), lon: toDeg(λ2) };
+}
+
+// Segment intersection — the core lap detection algorithm
+// Returns true if segment A1→A2 crosses segment B1→B2
+function segmentsIntersect(a1, a2, b1, b2) {
+  function cross2D(o, a, b) {
+    return (a.x-o.x)*(b.y-o.y) - (a.y-o.y)*(b.x-o.x);
+  }
+  function onSegment(p, a, b) {
+    return Math.min(a.x,b.x) <= p.x && p.x <= Math.max(a.x,b.x) &&
+           Math.min(a.y,b.y) <= p.y && p.y <= Math.max(a.y,b.y);
+  }
+  // Project to flat coords (fine for small distances)
+  const toXY = (c) => ({ x: c.lon * Math.cos(toRad(c.lat)), y: c.lat });
+  const A1=toXY(a1), A2=toXY(a2), B1=toXY(b1), B2=toXY(b2);
+  const d1=cross2D(B1,B2,A1), d2=cross2D(B1,B2,A2);
+  const d3=cross2D(A1,A2,B1), d4=cross2D(A1,A2,B2);
+  if (((d1>0&&d2<0)||(d1<0&&d2>0)) && ((d3>0&&d4<0)||(d3<0&&d4>0))) return true;
+  if (d1===0 && onSegment(A1,B1,B2)) return true;
+  if (d2===0 && onSegment(A2,B1,B2)) return true;
+  if (d3===0 && onSegment(B1,A1,A2)) return true;
+  if (d4===0 && onSegment(B2,A1,A2)) return true;
+  return false;
+}
+
+function checkLineCrossing(prevPos, curPos) {
+  if (!state.lineP1 || !state.lineP2) return;
+  const crossed = segmentsIntersect(prevPos, curPos, state.lineP1, state.lineP2);
+  if (!crossed) return;
+
+  const now = Date.now();
+
+  if (!state.hasCrossed) {
+    // First crossing — just start the timer
+    state.hasCrossed = true;
+    state.lapStartTime = now;
+    state.currentLapNum = 1;
+    document.getElementById('lap-count-display').textContent = 'LAP 1 · TIMING STARTED';
+    flashCross();
+    return;
+  }
+
+  // Debounce: ignore crossings within 5 seconds of last one
+  const elapsed = now - state.lapStartTime;
+  if (elapsed < 5000) return;
+
+  // Record lap
+  const lapMs = elapsed;
+  const lapTime = formatTime(lapMs);
+  const spd = curPos.speed != null ? Math.round(curPos.speed) : null;
+
+  let delta = null;
+  if (state.bestLap !== null) {
+    delta = lapMs - state.bestLap;
+  }
+
+  if (state.bestLap === null || lapMs < state.bestLap) {
+    state.bestLap = lapMs;
+    document.getElementById('best-lap-display').textContent = lapTime;
+  }
+
+  state.laps.push({ num: state.currentLapNum, ms: lapMs, time: lapTime, speed: spd, delta });
+  addLapRow(state.laps[state.laps.length - 1]);
+  updateDelta(delta);
+
+  // Reset for next lap
+  state.lapStartTime = now;
+  state.currentLapNum++;
+  document.getElementById('lap-count-display').textContent = `LAP ${state.currentLapNum} · IN PROGRESS`;
+  flashCross();
+  saveLaps();
+}
+
+function flashCross() {
+  const el = document.getElementById('cross-flash');
+  const timer = document.getElementById('timer-display');
+  el.classList.add('show');
+  timer.classList.add('crossed');
+  setTimeout(() => { el.classList.remove('show'); timer.classList.remove('crossed'); }, 400);
+}
+
+// ── TIMER ──
+function formatTime(ms) {
+  const m = Math.floor(ms/60000);
+  const s = Math.floor((ms%60000)/1000);
+  const cs = Math.floor((ms%1000)/10);
+  return `${m}:${String(s).padStart(2,'0')}.${String(Math.floor(ms%1000)).padStart(3,'0')}`;
+}
+
+function startTimer() {
+  state.timerInterval = setInterval(() => {
+    if (!state.lapStartTime || !state.hasCrossed) return;
+    const elapsed = Date.now() - state.lapStartTime;
+    document.getElementById('timer-display').textContent = formatTime(elapsed);
+  }, 50);
+}
+
+// ── LAP ROWS ──
+function addLapRow(lap) {
+  const isBest = state.bestLap === lap.ms;
+  const deltaStr = lap.delta !== null
+    ? (lap.delta >= 0 ? '+' : '') + formatTime(Math.abs(lap.delta))
+    : '—';
+  const deltaClass = lap.delta === null ? '' : (lap.delta > 0 ? 'pos' : 'neg');
+
+  const row = document.createElement('div');
+  row.className = 'lap-row' + (isBest ? ' best-lap' : '');
+  row.innerHTML = `
+    <span class="lap-num">${lap.num}</span>
+    <span class="lap-time">${lap.time}</span>
+    <span class="lap-delta ${deltaClass}">${deltaStr}</span>
+    <span class="lap-speed">${lap.speed !== null ? lap.speed : '—'}</span>
+  `;
+
+  // Re-render all rows to update best-lap highlight
+  const container = document.getElementById('lap-rows');
+  container.innerHTML = '';
+  state.laps.slice().reverse().forEach(l => {
+    const iB = state.bestLap === l.ms;
+    const dS = l.delta !== null ? (l.delta>=0?'+':'')+formatTime(Math.abs(l.delta)) : '—';
+    const dC = l.delta===null?'':(l.delta>0?'pos':'neg');
+    const r = document.createElement('div');
+    r.className = 'lap-row'+(iB?' best-lap':'');
+    r.innerHTML = `<span class="lap-num">${l.num}</span><span class="lap-time">${l.time}</span><span class="lap-delta ${dC}">${dS}</span><span class="lap-speed">${l.speed!==null?l.speed:'—'}</span>`;
+    container.appendChild(r);
+  });
+}
+
+function updateDelta(delta) {
+  const el = document.getElementById('delta-display');
+  if (delta === null) { el.textContent = '—'; el.style.color = 'var(--muted)'; return; }
+  el.textContent = (delta >= 0 ? '+' : '') + formatTime(Math.abs(delta));
+  el.style.color = delta > 0 ? 'var(--accent2)' : 'var(--green)';
+}
+
+// ── ACTIONS ──
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function goSetup() {
+  showScreen('setup');
+}
+
+function setStartLine() {
+  if (!state.gpsPos) return;
+  const p = state.gpsPos;
+
+  // Use heading if available, else default to north
+  const heading = (p.heading != null && !isNaN(p.heading)) ? p.heading : 0;
+  // Perpendicular = heading + 90
+  const perpBearing = (heading + 90) % 360;
+
+  state.startLine = { lat: p.lat, lon: p.lon, bearing: perpBearing };
+  // Extend 25m each side of the line
+  state.lineP1 = destPoint(p.lat, p.lon, perpBearing, 25);
+  state.lineP2 = destPoint(p.lat, p.lon, (perpBearing + 180) % 360, 25);
+
+  saveLastLine();
+  startSession();
+}
+
+function setManualLine() {
+  const lat = parseFloat(document.getElementById('manual-lat').value);
+  const lon = parseFloat(document.getElementById('manual-lon').value);
+  if (isNaN(lat) || isNaN(lon)) { alert('Enter valid coordinates'); return; }
+  state.startLine = { lat, lon, bearing: 90 };
+  state.lineP1 = destPoint(lat, lon, 90, 25);
+  state.lineP2 = destPoint(lat, lon, 270, 25);
+  saveLastLine();
+  startSession();
+}
+
+function quickStart() {
+  if (loadLastLine()) startSession();
+}
+
+function startSession() {
+  state.sessionActive = true;
+  state.hasCrossed = false;
+  state.lapStartTime = null;
+  state.currentLapNum = 1;
+  state.laps = [];
+  state.bestLap = null;
+  document.getElementById('lap-rows').innerHTML = '';
+  document.getElementById('timer-display').textContent = '0:00.000';
+  document.getElementById('best-lap-display').textContent = '—';
+  document.getElementById('delta-display').textContent = '—';
+  document.getElementById('speed-display').innerHTML = '0 <span style="font-size:13px;color:var(--muted)">km/h</span>';
+  document.getElementById('lap-count-display').textContent = 'LAP 1 · CROSS THE LINE TO START';
+  document.getElementById('line-info').textContent = `Line @ ${state.startLine.lat.toFixed(4)}, ${state.startLine.lon.toFixed(4)}`;
+
+  // Keep screen awake
+  if ('wakeLock' in navigator) {
+    navigator.wakeLock.request('screen').catch(()=>{});
+  }
+
+  startTimer();
+  showScreen('race');
+}
+
+function stopSession() {
+  state.sessionActive = false;
+  clearInterval(state.timerInterval);
+  saveLaps();
+  buildResultsScreen();
+  showScreen('results');
+}
+
+function saveLaps() {
+  if (state.laps.length > 0) {
+    localStorage.setItem('lapforge_session', JSON.stringify({
+      laps: state.laps, best: state.bestLap, date: new Date().toISOString()
+    }));
+    document.getElementById('btn-quick-start').disabled = false;
+  }
+}
+
+function buildResultsScreen() {
+  const best = state.bestLap ? formatTime(state.bestLap) : '—';
+  document.getElementById('results-best').textContent = best;
+  document.getElementById('results-summary').textContent =
+    `${state.laps.length} LAPS · SESSION COMPLETE`;
+
+  const container = document.getElementById('results-laps');
+  container.innerHTML = '';
+  state.laps.forEach(l => {
+    const isBest = state.bestLap === l.ms;
+    const row = document.createElement('div');
+    row.className = 'result-row' + (isBest ? ' best' : '');
+    row.innerHTML = `
+      <span style="color:var(--muted)">Lap ${l.num}</span>
+      <span style="color:${isBest?'var(--green)':'var(--text)'};font-weight:${isBest?700:400}">${l.time}</span>
+      <span style="color:var(--muted);font-size:13px">${l.speed !== null ? l.speed+' km/h' : ''}</span>
+    `;
+    container.appendChild(row);
+  });
+}
+
+function goResults() {
+  try {
+    const d = JSON.parse(localStorage.getItem('lapforge_session'));
+    if (d) {
+      state.laps = d.laps; state.bestLap = d.best;
+      buildResultsScreen();
+      showScreen('results');
+    } else {
+      alert('No saved session found.');
+    }
+  } catch(e) { alert('No saved session found.'); }
+}
+
+function clearSession() {
+  localStorage.removeItem('lapforge_session');
+  state.laps = []; state.bestLap = null;
+  showScreen('home');
+}
+
+// ── INIT ──
+window.addEventListener('load', () => {
+  startGPS();
+  if (loadLastLine()) {
+    document.getElementById('btn-quick-start').disabled = false;
+  }
+  // Check for saved session
+  try {
+    const d = JSON.parse(localStorage.getItem('lapforge_session'));
+    if (!d || d.laps.length === 0) { /* nothing */ }
+  } catch(e) {}
+});
+</script>
+</body>
+</html>
