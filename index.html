@@ -9,761 +9,994 @@
 <title>LapForge</title>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@300;400;600;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --bg: #0a0a0b;
-    --surface: #111114;
-    --surface2: #1a1a1f;
-    --border: #2a2a32;
-    --accent: #e8ff47;
-    --accent2: #ff4747;
-    --accent3: #47aaff;
-    --text: #f0f0f0;
-    --muted: #666672;
-    --green: #39ff85;
-    --orange: #ff8c42;
-  }
-  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
-  html,body { width:100%; height:100%; overflow:hidden; background:var(--bg); color:var(--text); font-family:'Barlow Condensed', sans-serif; }
+:root{
+  --bg:#0a0a0b;--surface:#111114;--surface2:#18181d;--border:#252530;
+  --accent:#e8ff47;--red:#ff4747;--blue:#47aaff;--text:#f0f0f0;
+  --muted:#55555f;--green:#39ff85;--orange:#ff8c42;--purple:#b47fff;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:'Barlow Condensed',sans-serif}
+.screen{position:absolute;inset:0;display:none;flex-direction:column}
+.screen.active{display:flex}
 
-  /* ── SCREENS ── */
-  .screen { position:absolute; inset:0; display:none; flex-direction:column; }
-  .screen.active { display:flex; }
+/* HOME */
+#home{align-items:center;justify-content:center}
+.logo-mark{width:64px;height:64px;margin:0 auto 10px;border:3px solid var(--accent);display:flex;align-items:center;justify-content:center;transform:rotate(45deg)}
+.logo-mark-inner{width:24px;height:24px;background:var(--accent)}
+.logo-name{font-size:44px;font-weight:900;letter-spacing:4px;color:var(--accent);line-height:1;text-align:center}
+.logo-sub{font-size:12px;letter-spacing:6px;color:var(--muted);margin-top:4px;text-align:center}
+.logo-block{margin-bottom:36px}
+.home-actions{display:flex;flex-direction:column;gap:12px;width:100%;max-width:300px;padding:0 20px}
+.btn-primary{background:var(--accent);color:#000;border:none;font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:700;letter-spacing:3px;padding:16px;cursor:pointer;text-transform:uppercase;clip-path:polygon(0 0,calc(100% - 10px) 0,100% 10px,100% 100%,10px 100%,0 calc(100% - 10px));transition:opacity .15s}
+.btn-primary:active{opacity:.8}
+.btn-primary:disabled{background:var(--border);color:var(--muted);clip-path:none;cursor:default}
+.btn-secondary{background:transparent;color:var(--muted);border:1px solid var(--border);font-family:'Barlow Condensed',sans-serif;font-size:17px;font-weight:600;letter-spacing:2px;padding:12px;cursor:pointer;text-transform:uppercase}
+.btn-secondary:disabled{opacity:.4;cursor:default}
+.status-bar{position:absolute;bottom:0;left:0;right:0;background:var(--surface);border-top:1px solid var(--border);padding:9px 16px;display:flex;align-items:center;gap:8px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted)}
+.gdot{width:7px;height:7px;border-radius:50%;background:var(--muted);flex-shrink:0}
+.gdot.good{background:var(--green);box-shadow:0 0 5px var(--green);animation:pulse 2s infinite}
+.gdot.ok{background:var(--orange)}
+.gdot.bad{background:var(--red)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
 
-  /* ── BOOT / HOME ── */
-  #home {
-    background: var(--bg);
-    align-items:center; justify-content:center;
-    gap:0;
-  }
-  .logo-block { text-align:center; margin-bottom:40px; }
-  .logo-mark {
-    width:72px; height:72px; margin:0 auto 12px;
-    border:3px solid var(--accent);
-    display:flex; align-items:center; justify-content:center;
-    transform:rotate(45deg);
-  }
-  .logo-mark-inner {
-    width:28px; height:28px; background:var(--accent);
-    transform:rotate(0deg);
-  }
-  .logo-name { font-size:48px; font-weight:900; letter-spacing:4px; color:var(--accent); line-height:1; }
-  .logo-sub { font-size:14px; font-weight:400; letter-spacing:6px; color:var(--muted); margin-top:6px; }
+/* SETUP */
+.hdr{background:var(--surface);border-bottom:1px solid var(--border);padding:14px 16px;display:flex;align-items:center;gap:14px;flex-shrink:0}
+.back-btn{background:none;border:1px solid var(--border);color:var(--muted);font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:600;letter-spacing:1px;padding:5px 10px;cursor:pointer;text-transform:uppercase}
+.hdr-title{font-size:22px;font-weight:700;letter-spacing:2px;color:var(--accent)}
+.setup-body{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:14px}
+.card{background:var(--surface);border:1px solid var(--border);padding:14px}
+.card-label{font-size:10px;font-weight:600;letter-spacing:3px;color:var(--muted);text-transform:uppercase;margin-bottom:8px}
+.card-value{font-family:'JetBrains Mono',monospace;font-size:14px;color:var(--green)}
+.card-value.dim{color:var(--muted)}
+.info-text{font-size:15px;color:var(--muted);line-height:1.6;letter-spacing:.3px}
+.info-text strong{color:var(--text)}
+.info-text em{color:var(--accent);font-style:normal}
+.btn-set{background:var(--accent);color:#000;border:none;font-family:'Barlow Condensed',sans-serif;font-size:19px;font-weight:700;letter-spacing:3px;padding:16px;cursor:pointer;text-transform:uppercase;clip-path:polygon(0 0,calc(100% - 10px) 0,100% 10px,100% 100%,10px 100%,0 calc(100% - 10px));width:100%;transition:opacity .15s}
+.btn-set:disabled{background:var(--border);color:var(--muted);clip-path:none;cursor:default}
 
-  .home-actions { display:flex; flex-direction:column; gap:14px; width:100%; max-width:320px; padding:0 24px; }
-  .btn-primary {
-    background:var(--accent); color:#000; border:none;
-    font-family:'Barlow Condensed',sans-serif; font-size:22px; font-weight:700; letter-spacing:3px;
-    padding:18px; cursor:pointer; text-transform:uppercase;
-    transition:all .15s; clip-path:polygon(0 0,calc(100% - 12px) 0,100% 12px,100% 100%,12px 100%,0 calc(100% - 12px));
-  }
-  .btn-primary:active { transform:scale(.97); }
-  .btn-secondary {
-    background:transparent; color:var(--muted); border:1px solid var(--border);
-    font-family:'Barlow Condensed',sans-serif; font-size:18px; font-weight:600; letter-spacing:2px;
-    padding:14px; cursor:pointer; text-transform:uppercase;
-    transition:all .15s;
-  }
-  .btn-secondary:active { border-color:var(--accent); color:var(--accent); }
+/* RACE HUD */
+#race{background:var(--bg)}
+.race-top{display:flex;align-items:center;justify-content:space-between;background:var(--surface);border-bottom:1px solid var(--border);padding:8px 14px;flex-shrink:0}
+.race-top-left{display:flex;align-items:center;gap:10px}
+.session-label{font-size:11px;letter-spacing:3px;color:var(--muted);text-transform:uppercase}
+.lap-badge{background:var(--accent);color:#000;font-size:14px;font-weight:900;letter-spacing:2px;padding:3px 10px}
+.race-status-txt{font-size:11px;letter-spacing:1px;color:var(--muted)}
+.btn-end{background:var(--red);color:#fff;border:none;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:2px;padding:7px 14px;cursor:pointer;text-transform:uppercase}
 
-  .gps-status-bar {
-    position:absolute; bottom:0; left:0; right:0;
-    background:var(--surface); border-top:1px solid var(--border);
-    padding:10px 20px; display:flex; align-items:center; gap:10px;
-    font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--muted);
-  }
-  .gps-dot { width:8px; height:8px; border-radius:50%; background:var(--muted); flex-shrink:0; }
-  .gps-dot.good { background:var(--green); box-shadow:0 0 6px var(--green); animation:pulse 2s infinite; }
-  .gps-dot.ok { background:var(--orange); }
-  .gps-dot.bad { background:var(--accent2); }
-  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
+.race-main{flex:1;display:flex;overflow:hidden;min-height:0}
 
-  /* ── SETUP LINE ── */
-  #setup {
-    background:var(--bg);
-  }
-  .screen-header {
-    background:var(--surface); border-bottom:1px solid var(--border);
-    padding:16px 20px; display:flex; align-items:center; gap:16px;
-  }
-  .back-btn {
-    background:none; border:1px solid var(--border); color:var(--muted);
-    font-family:'Barlow Condensed',sans-serif; font-size:14px; font-weight:600; letter-spacing:1px;
-    padding:6px 12px; cursor:pointer; text-transform:uppercase;
-  }
-  .screen-title { font-size:24px; font-weight:700; letter-spacing:2px; color:var(--accent); }
+/* Left panel */
+.race-panel{width:195px;flex-shrink:0;display:flex;flex-direction:column;border-right:1px solid var(--border);overflow:hidden}
 
-  .setup-body { flex:1; display:flex; flex-direction:column; padding:20px; gap:16px; overflow-y:auto; }
+.big-timer{padding:10px 8px 6px;border-bottom:1px solid var(--border);text-align:center;flex-shrink:0}
+.big-timer-label{font-size:9px;letter-spacing:3px;color:var(--muted);text-transform:uppercase;margin-bottom:1px}
+.big-timer-val{font-family:'JetBrains Mono',monospace;font-size:38px;font-weight:700;line-height:1;color:var(--accent);letter-spacing:-1px;transition:color .25s}
+.big-timer-val.crossed{color:var(--green)}
 
-  .info-card {
-    background:var(--surface); border:1px solid var(--border);
-    padding:16px; border-left:3px solid var(--accent3);
-  }
-  .info-card p { font-size:16px; color:var(--muted); line-height:1.5; font-family:'Barlow Condensed',sans-serif; font-weight:400; letter-spacing:.5px; }
-  .info-card strong { color:var(--text); font-weight:600; }
+.delta-block{padding:6px 8px;border-bottom:1px solid var(--border);text-align:center;flex-shrink:0}
+.delta-label{font-size:9px;letter-spacing:3px;color:var(--muted);text-transform:uppercase;margin-bottom:1px}
+.delta-val{font-family:'JetBrains Mono',monospace;font-size:26px;font-weight:700;color:var(--muted);line-height:1;transition:color .2s}
+.delta-val.pos{color:var(--red)}
+.delta-val.neg{color:var(--green)}
 
-  .coord-display {
-    background:var(--surface2); border:1px solid var(--border);
-    padding:16px;
-  }
-  .coord-label { font-size:11px; font-weight:600; letter-spacing:3px; color:var(--muted); text-transform:uppercase; margin-bottom:8px; }
-  .coord-value { font-family:'JetBrains Mono',monospace; font-size:15px; color:var(--green); }
-  .coord-value.pending { color:var(--muted); }
+.metrics{display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid var(--border);flex-shrink:0}
+.metric{padding:7px 5px;text-align:center;border-right:1px solid var(--border)}
+.metric:nth-child(2n){border-right:none}
+.metric:nth-child(n+3){border-top:1px solid var(--border)}
+.m-label{font-size:8px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-bottom:2px}
+.m-val{font-family:'JetBrains Mono',monospace;font-size:16px;font-weight:700;color:var(--text);line-height:1}
+.m-val.green{color:var(--green)}
+.m-val.blue{color:var(--blue)}
+.m-val.orange{color:var(--orange)}
 
-  .btn-set-line {
-    background:var(--accent); color:#000; border:none;
-    font-family:'Barlow Condensed',sans-serif; font-size:20px; font-weight:700; letter-spacing:3px;
-    padding:18px; cursor:pointer; text-transform:uppercase;
-    clip-path:polygon(0 0,calc(100% - 10px) 0,100% 10px,100% 100%,10px 100%,0 calc(100% - 10px));
-    transition:all .15s;
-  }
-  .btn-set-line:disabled { background:var(--border); color:var(--muted); cursor:not-allowed; clip-path:none; }
-  .btn-set-line:not(:disabled):active { transform:scale(.97); }
+/* Sectors strip */
+.sectors-strip{border-bottom:1px solid var(--border);padding:6px 6px 5px;flex-shrink:0}
+.s-header{font-size:8px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-bottom:5px}
+.sectors-grid{display:flex;gap:3px}
+.s-cell{flex:1;background:var(--surface2);border:1px solid var(--border);padding:4px 3px;text-align:center;transition:border-color .2s,background .2s}
+.s-cell.s-active{border-color:var(--accent);background:rgba(232,255,71,.04)}
+.s-cell.s-best{border-color:var(--green);background:rgba(57,255,133,.05)}
+.s-cell.s-slow{border-color:var(--red);background:rgba(255,71,71,.04)}
+.s-num{font-size:8px;color:var(--muted);letter-spacing:1px;margin-bottom:2px}
+.s-time{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);line-height:1}
+.s-time.live{color:var(--accent)}
+.s-time.best{color:var(--green)}
+.s-time.slow{color:var(--red)}
+.sector-learning{font-size:10px;color:var(--orange);letter-spacing:1px;text-align:center;padding:6px;font-style:italic}
 
-  .manual-section { border-top:1px solid var(--border); padding-top:16px; }
-  .section-label { font-size:13px; font-weight:600; letter-spacing:3px; color:var(--muted); text-transform:uppercase; margin-bottom:12px; }
-  .input-row { display:flex; gap:10px; }
-  .coord-input {
-    flex:1; background:var(--surface2); border:1px solid var(--border); color:var(--text);
-    font-family:'JetBrains Mono',monospace; font-size:14px;
-    padding:10px 12px; outline:none;
-  }
-  .coord-input:focus { border-color:var(--accent3); }
-  .btn-manual {
-    background:var(--surface2); color:var(--accent3); border:1px solid var(--accent3);
-    font-family:'Barlow Condensed',sans-serif; font-size:16px; font-weight:700; letter-spacing:2px;
-    padding:10px 16px; cursor:pointer; text-transform:uppercase;
-  }
+/* Lap list */
+.lap-list-hdr{display:grid;grid-template-columns:26px 1fr 54px;padding:4px 6px;background:var(--surface2);flex-shrink:0}
+.lap-list-hdr span{font-size:8px;letter-spacing:2px;color:var(--muted);text-transform:uppercase}
+.lap-scroll{flex:1;overflow-y:auto}
+.lap-entry{display:grid;grid-template-columns:26px 1fr 54px;padding:6px 6px;border-bottom:1px solid var(--border);animation:fadeIn .25s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(-5px)}to{opacity:1;transform:none}}
+.lap-entry.best{background:rgba(57,255,133,.05);border-left:2px solid var(--green)}
+.le-num{font-size:11px;color:var(--muted);font-family:'JetBrains Mono',monospace}
+.le-time{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text)}
+.lap-entry.best .le-time{color:var(--green);font-weight:700}
+.le-delta{font-family:'JetBrains Mono',monospace;font-size:10px;text-align:right}
+.le-delta.pos{color:var(--red)}
+.le-delta.neg{color:var(--green)}
 
-  /* ── RACE SCREEN ── */
-  #race { background:var(--bg); }
+/* Map */
+.map-area{flex:1;position:relative;overflow:hidden;min-width:0}
+#track-canvas{width:100%;height:100%;display:block}
+.car-dot{position:absolute;width:12px;height:12px;border-radius:50%;background:var(--accent);border:2px solid #000;transform:translate(-50%,-50%);pointer-events:none;z-index:10;transition:left .25s linear,top .25s linear}
+.car-heading{position:absolute;width:0;height:0;pointer-events:none;z-index:11;transform-origin:center bottom;transition:left .25s linear,top .25s linear}
+.map-overlay{position:absolute;top:8px;right:8px;display:flex;flex-direction:column;gap:5px;z-index:20}
+.map-badge{background:rgba(10,10,11,.88);border:1px solid var(--border);padding:4px 9px;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted)}
+.map-badge span{color:var(--text)}
+.sector-badge{position:absolute;background:rgba(10,10,11,.9);border:1px solid var(--blue);padding:3px 7px;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--blue);pointer-events:none;z-index:12;transform:translate(-50%,-140%);white-space:nowrap}
 
-  .race-header {
-    background:var(--surface); border-bottom:1px solid var(--border);
-    padding:10px 16px; display:flex; align-items:center; justify-content:space-between;
-  }
-  .race-title { font-size:18px; font-weight:700; letter-spacing:2px; color:var(--muted); }
-  .btn-stop {
-    background:var(--accent2); color:#fff; border:none;
-    font-family:'Barlow Condensed',sans-serif; font-size:14px; font-weight:700; letter-spacing:2px;
-    padding:8px 16px; cursor:pointer; text-transform:uppercase;
-  }
+/* Cross flash */
+.cross-flash{position:absolute;inset:0;background:var(--accent);opacity:0;pointer-events:none;z-index:50;transition:opacity .07s}
+.cross-flash.show{opacity:.16}
 
-  /* big timer */
-  .timer-block {
-    background:var(--surface); border-bottom:1px solid var(--border);
-    padding:20px 16px 16px; text-align:center;
-  }
-  .timer-label { font-size:11px; font-weight:600; letter-spacing:4px; color:var(--muted); text-transform:uppercase; margin-bottom:4px; }
-  .timer-value {
-    font-family:'JetBrains Mono',monospace; font-size:72px; font-weight:700; line-height:1;
-    color:var(--accent); letter-spacing:-2px;
-    transition:color .3s;
-  }
-  .timer-value.crossed { color:var(--green); }
-  .lap-count { font-size:16px; color:var(--muted); margin-top:4px; letter-spacing:2px; }
+/* Bottom strip */
+.race-bottom{background:var(--surface);border-top:1px solid var(--border);padding:5px 12px;display:flex;align-items:center;gap:14px;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);flex-shrink:0}
+.rb-item{display:flex;align-items:center;gap:5px}
+.rb-dot{width:5px;height:5px;border-radius:50%}
 
-  /* metrics row */
-  .metrics-row {
-    display:grid; grid-template-columns:1fr 1fr 1fr;
-    border-bottom:1px solid var(--border);
-  }
-  .metric {
-    padding:14px 10px; text-align:center; border-right:1px solid var(--border);
-  }
-  .metric:last-child { border-right:none; }
-  .metric-label { font-size:10px; font-weight:600; letter-spacing:3px; color:var(--muted); text-transform:uppercase; margin-bottom:4px; }
-  .metric-value { font-family:'JetBrains Mono',monospace; font-size:22px; font-weight:700; color:var(--text); }
-  .metric-value.best { color:var(--green); }
-  .metric-value.speed { color:var(--accent3); }
-
-  /* lap list */
-  .lap-list { flex:1; overflow-y:auto; }
-  .lap-list-header {
-    display:grid; grid-template-columns:48px 1fr 1fr 1fr;
-    padding:8px 16px; background:var(--surface2);
-    border-bottom:1px solid var(--border);
-  }
-  .lap-list-header span { font-size:10px; font-weight:600; letter-spacing:2px; color:var(--muted); text-transform:uppercase; }
-  .lap-row {
-    display:grid; grid-template-columns:48px 1fr 1fr 1fr;
-    padding:12px 16px; border-bottom:1px solid var(--border);
-    font-family:'JetBrains Mono',monospace; font-size:15px;
-    animation:fadeIn .3s ease;
-  }
-  @keyframes fadeIn { from{opacity:0;transform:translateY(-8px)} to{opacity:1;transform:none} }
-  .lap-row.best-lap { background:rgba(57,255,133,.06); border-left:3px solid var(--green); }
-  .lap-row.best-lap .lap-time { color:var(--green); font-weight:700; }
-  .lap-num { color:var(--muted); }
-  .lap-time { color:var(--text); }
-  .lap-delta { font-size:13px; }
-  .lap-delta.pos { color:var(--accent2); }
-  .lap-delta.neg { color:var(--green); }
-  .lap-speed { color:var(--muted); font-size:13px; }
-
-  /* status strip */
-  .status-strip {
-    background:var(--surface); border-top:1px solid var(--border);
-    padding:8px 16px; display:flex; align-items:center; gap:12px;
-    font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--muted);
-  }
-  .status-item { display:flex; align-items:center; gap:6px; }
-  .status-dot { width:6px; height:6px; border-radius:50%; }
-
-  /* cross flash */
-  .cross-flash {
-    position:absolute; inset:0; background:var(--accent);
-    opacity:0; pointer-events:none; z-index:100;
-    transition:opacity .1s;
-  }
-  .cross-flash.show { opacity:.15; }
-
-  /* ── RESULTS ── */
-  #results { background:var(--bg); }
-  .results-body { flex:1; overflow-y:auto; padding:20px; display:flex; flex-direction:column; gap:16px; }
-  .results-hero { text-align:center; padding:24px 0; border-bottom:1px solid var(--border); }
-  .results-laps { display:flex; flex-direction:column; gap:8px; }
-  .result-row {
-    background:var(--surface); border:1px solid var(--border);
-    display:grid; grid-template-columns:48px 1fr 1fr;
-    padding:12px 16px; font-family:'JetBrains Mono',monospace; font-size:15px;
-    animation:fadeIn .3s ease;
-  }
-  .result-row.best { border-color:var(--green); background:rgba(57,255,133,.05); }
-  .results-actions { display:flex; gap:12px; }
-  .btn-results {
-    flex:1; background:var(--surface); border:1px solid var(--border); color:var(--text);
-    font-family:'Barlow Condensed',sans-serif; font-size:18px; font-weight:600; letter-spacing:2px;
-    padding:16px; cursor:pointer; text-transform:uppercase;
-  }
-  .btn-results.primary { background:var(--accent); color:#000; border-color:var(--accent); }
+/* RESULTS */
+.results-body{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:14px}
+.results-hero{text-align:center;padding:20px 0;border-bottom:1px solid var(--border)}
+.rh-label{font-size:10px;letter-spacing:4px;color:var(--muted);text-transform:uppercase;margin-bottom:6px}
+.rh-time{font-family:'JetBrains Mono',monospace;font-size:48px;font-weight:700;color:var(--green)}
+.rh-sub{font-size:13px;color:var(--muted);margin-top:4px;letter-spacing:2px}
+.results-sectors{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:8px}
+.res-sec-card{background:var(--surface);border:1px solid var(--border);padding:10px;text-align:center}
+.res-sec-label{font-size:9px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-bottom:4px}
+.res-sec-time{font-family:'JetBrains Mono',monospace;font-size:14px;color:var(--green);font-weight:700}
+.results-grid{display:flex;flex-direction:column;gap:5px}
+.result-row{background:var(--surface);border:1px solid var(--border);display:grid;grid-template-columns:36px 1fr 70px 55px;padding:9px 12px;font-family:'JetBrains Mono',monospace;font-size:12px;gap:4px;align-items:center}
+.result-row.best{border-color:var(--green);background:rgba(57,255,133,.04)}
+.r-num{color:var(--muted)}
+.r-time{color:var(--text)}
+.result-row.best .r-time{color:var(--green);font-weight:700}
+.r-delta{font-size:10px}
+.r-delta.pos{color:var(--red)}
+.r-delta.neg{color:var(--green)}
+.r-spd{color:var(--muted);font-size:10px;text-align:right}
+.results-actions{display:flex;gap:10px}
+.btn-res{flex:1;background:var(--surface);border:1px solid var(--border);color:var(--text);font-family:'Barlow Condensed',sans-serif;font-size:17px;font-weight:600;letter-spacing:2px;padding:13px;cursor:pointer;text-transform:uppercase}
+.btn-res.primary{background:var(--accent);color:#000;border-color:var(--accent)}
 </style>
 </head>
 <body>
 
-<!-- ── HOME ── -->
+<!-- HOME -->
 <div id="home" class="screen active">
-  <div class="logo-block" style="margin-top:-40px">
+  <div class="logo-block">
     <div class="logo-mark"><div class="logo-mark-inner"></div></div>
     <div class="logo-name">LAPFORGE</div>
-    <div class="logo-sub">GPS LAP TIMER</div>
+    <div class="logo-sub">GPS LAP TIMER v3</div>
   </div>
   <div class="home-actions">
-    <button class="btn-primary" onclick="goSetup()">SET START LINE</button>
-    <button class="btn-secondary" id="btn-quick-start" onclick="quickStart()" disabled>QUICK START (LAST LINE)</button>
-    <button class="btn-secondary" onclick="goResults()">VIEW LAST SESSION</button>
+    <button class="btn-primary" onclick="showScreen('setup')">NEW SESSION</button>
+    <button class="btn-secondary" id="btn-quick" disabled onclick="quickStart()">QUICK START (LAST LINE)</button>
+    <button class="btn-secondary" onclick="loadAndShowResults()">LAST SESSION</button>
   </div>
-  <div class="gps-status-bar">
-    <div class="gps-dot" id="home-gps-dot"></div>
-    <span id="home-gps-text">Acquiring GPS...</span>
+  <div class="status-bar">
+    <div class="gdot" id="h-dot"></div>
+    <span id="h-gps">Acquiring GPS…</span>
   </div>
 </div>
 
-<!-- ── SETUP ── -->
+<!-- SETUP -->
 <div id="setup" class="screen">
-  <div class="screen-header">
-    <button class="back-btn" onclick="showScreen('home')">&#8592; Back</button>
-    <div class="screen-title">START LINE</div>
+  <div class="hdr">
+    <button class="back-btn" onclick="showScreen('home')">← Back</button>
+    <div class="hdr-title">SESSION SETUP</div>
   </div>
   <div class="setup-body">
-    <div class="info-card">
-      <p>Drive to your <strong>start/finish line</strong> and tap the button below. LapForge will draw a perpendicular virtual line at your current position and heading.</p>
+    <div class="card" style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      <div>
+        <div class="card-label">GPS Position</div>
+        <div class="card-value dim" id="su-coords">Waiting…</div>
+      </div>
+      <div>
+        <div class="card-label">Accuracy</div>
+        <div class="card-value dim" id="su-acc">—</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="info-text">
+        Drive to your <strong>start/finish line</strong> and tap the button below.<br><br>
+        Sectors are <em>automatic</em> — LapForge records your first lap, then splits it into 3 equal sectors by distance. No input needed while driving.
+      </div>
+    </div>
+    <button class="btn-set" id="btn-set-line" disabled onclick="setLineAndStart()">DROP START LINE &amp; GO</button>
+  </div>
+  <div class="status-bar">
+    <div class="gdot" id="su-dot"></div>
+    <span id="su-gps">Acquiring GPS…</span>
+  </div>
+</div>
+
+<!-- RACE HUD -->
+<div id="race" class="screen">
+  <div class="cross-flash" id="cf"></div>
+
+  <div class="race-top">
+    <div class="race-top-left">
+      <div class="session-label">LapForge</div>
+      <div class="lap-badge" id="lap-badge">LAP 1</div>
+      <div class="race-status-txt" id="race-status">Cross line to start</div>
+    </div>
+    <button class="btn-end" onclick="endSession()">END</button>
+  </div>
+
+  <div class="race-main">
+    <!-- Left panel -->
+    <div class="race-panel">
+      <div class="big-timer">
+        <div class="big-timer-label">Lap Time</div>
+        <div class="big-timer-val" id="rt-timer">0:00.000</div>
+      </div>
+      <div class="delta-block">
+        <div class="delta-label">Delta vs Best</div>
+        <div class="delta-val" id="rt-delta">—</div>
+      </div>
+      <div class="metrics">
+        <div class="metric"><div class="m-label">Best</div><div class="m-val green" id="rt-best">—</div></div>
+        <div class="metric"><div class="m-label">Last</div><div class="m-val" id="rt-last">—</div></div>
+        <div class="metric"><div class="m-label">km/h</div><div class="m-val blue" id="rt-speed">0</div></div>
+        <div class="metric"><div class="m-label">Laps</div><div class="m-val orange" id="rt-laps">0</div></div>
+      </div>
+
+      <!-- Sectors -->
+      <div class="sectors-strip" id="sectors-strip">
+        <div class="s-header">Sectors</div>
+        <div id="sectors-learning" class="sector-learning">Learning on lap 1…</div>
+        <div class="sectors-grid" id="sectors-grid" style="display:none">
+          <div class="s-cell" id="sc-0"><div class="s-num">S1</div><div class="s-time" id="st-0">—</div></div>
+          <div class="s-cell" id="sc-1"><div class="s-num">S2</div><div class="s-time" id="st-1">—</div></div>
+          <div class="s-cell" id="sc-2"><div class="s-num">S3</div><div class="s-time" id="st-2">—</div></div>
+        </div>
+      </div>
+
+      <div class="lap-list-hdr">
+        <span>#</span><span>Time</span><span>Delta</span>
+      </div>
+      <div class="lap-scroll" id="lap-scroll"></div>
     </div>
 
-    <div class="coord-display">
-      <div class="coord-label">Current GPS Position</div>
-      <div class="coord-value pending" id="setup-coords">Waiting for GPS fix...</div>
-    </div>
-
-    <div class="coord-display">
-      <div class="coord-label">GPS Accuracy</div>
-      <div class="coord-value pending" id="setup-accuracy">—</div>
-    </div>
-
-    <button class="btn-set-line" id="btn-set-line" disabled onclick="setStartLine()">
-      DROP START LINE HERE
-    </button>
-
-    <div class="manual-section">
-      <div class="section-label">Or enter coordinates manually</div>
-      <div class="input-row">
-        <input class="coord-input" id="manual-lat" placeholder="Latitude" type="number" step="any">
-        <input class="coord-input" id="manual-lon" placeholder="Longitude" type="number" step="any">
-        <button class="btn-manual" onclick="setManualLine()">SET</button>
+    <!-- Map -->
+    <div class="map-area" id="map-area">
+      <canvas id="track-canvas"></canvas>
+      <div class="car-dot" id="car-dot" style="display:none"></div>
+      <div class="map-overlay">
+        <div class="map-badge" id="mb-acc">Acc <span>—</span></div>
+        <div class="map-badge" id="mb-spd">0 <span>km/h</span></div>
       </div>
     </div>
   </div>
-  <div class="gps-status-bar">
-    <div class="gps-dot" id="setup-gps-dot"></div>
-    <span id="setup-gps-text">Acquiring GPS...</span>
+
+  <div class="race-bottom">
+    <div class="rb-item"><div class="rb-dot" id="rb-gps-dot" style="background:var(--muted)"></div><span id="rb-gps">GPS</span></div>
+    <div class="rb-item"><div class="rb-dot" id="rb-sec-dot" style="background:var(--muted)"></div><span id="rb-sec">Sectors: learning</span></div>
+    <span style="margin-left:auto" id="rb-coords">—</span>
   </div>
 </div>
 
-<!-- ── RACE ── -->
-<div id="race" class="screen">
-  <div class="cross-flash" id="cross-flash"></div>
-
-  <div class="race-header">
-    <div class="race-title">LAPFORGE · RACING</div>
-    <button class="btn-stop" onclick="stopSession()">END SESSION</button>
-  </div>
-
-  <div class="timer-block">
-    <div class="timer-label">Current Lap</div>
-    <div class="timer-value" id="timer-display">0:00.000</div>
-    <div class="lap-count" id="lap-count-display">LAP 1 · WAITING FOR CROSSING</div>
-  </div>
-
-  <div class="metrics-row">
-    <div class="metric">
-      <div class="metric-label">Best Lap</div>
-      <div class="metric-value best" id="best-lap-display">—</div>
-    </div>
-    <div class="metric">
-      <div class="metric-label">Speed</div>
-      <div class="metric-value speed" id="speed-display">0 <span style="font-size:13px;color:var(--muted)">km/h</span></div>
-    </div>
-    <div class="metric">
-      <div class="metric-label">Delta</div>
-      <div class="metric-value" id="delta-display" style="color:var(--muted)">—</div>
-    </div>
-  </div>
-
-  <div class="lap-list">
-    <div class="lap-list-header">
-      <span>Lap</span>
-      <span>Time</span>
-      <span>Delta</span>
-      <span>Km/h</span>
-    </div>
-    <div id="lap-rows"></div>
-  </div>
-
-  <div class="status-strip">
-    <div class="status-item">
-      <div class="status-dot" id="race-gps-dot" style="background:var(--muted)"></div>
-      <span id="race-gps-text">GPS</span>
-    </div>
-    <div class="status-item">
-      <div class="status-dot" id="line-dot" style="background:var(--green)"></div>
-      <span id="line-info">Line set</span>
-    </div>
-    <span id="race-coords" style="margin-left:auto"></span>
-  </div>
-</div>
-
-<!-- ── RESULTS ── -->
+<!-- RESULTS -->
 <div id="results" class="screen">
-  <div class="screen-header">
-    <button class="back-btn" onclick="showScreen('home')">&#8592; Home</button>
-    <div class="screen-title">SESSION</div>
+  <div class="hdr">
+    <button class="back-btn" onclick="showScreen('home')">← Home</button>
+    <div class="hdr-title">SESSION</div>
   </div>
   <div class="results-body">
-    <div class="results-hero" id="results-hero">
-      <div style="font-size:11px;letter-spacing:4px;color:var(--muted);text-transform:uppercase;margin-bottom:8px">Best Lap</div>
-      <div style="font-family:'JetBrains Mono',monospace;font-size:56px;font-weight:700;color:var(--green)" id="results-best">—</div>
-      <div style="font-size:14px;color:var(--muted);margin-top:6px;letter-spacing:2px" id="results-summary"></div>
+    <div class="results-hero">
+      <div class="rh-label">Best Lap</div>
+      <div class="rh-time" id="res-best">—</div>
+      <div class="rh-sub" id="res-summary">—</div>
+      <div class="results-sectors" id="res-sectors" style="display:none"></div>
     </div>
-    <div class="results-laps" id="results-laps"></div>
+    <div class="results-grid" id="res-grid"></div>
     <div class="results-actions">
-      <button class="btn-results" onclick="clearSession()">CLEAR</button>
-      <button class="btn-results primary" onclick="goSetup()">NEW SESSION</button>
+      <button class="btn-res" onclick="clearResults()">CLEAR</button>
+      <button class="btn-res primary" onclick="showScreen('setup')">NEW SESSION</button>
     </div>
   </div>
 </div>
 
 <script>
-// ── STATE ──
-let state = {
-  gpsPos: null,           // {lat, lon, heading, speed, accuracy}
-  prevPos: null,
-  startLine: null,        // {lat, lon, bearing} — centre point + perpendicular bearing
-  lineP1: null,           // computed line endpoint 1
-  lineP2: null,           // computed line endpoint 2
-  sessionActive: false,
-  lapStartTime: null,
-  currentLapNum: 1,
-  laps: [],               // [{num, time, speed, delta}]
-  bestLap: null,
-  timerInterval: null,
+// ═══════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════
+const S = {
+  pos: null, prevPos: null,
+  // Start/finish line
+  line: null, lineP1: null, lineP2: null,
+  // Session
+  active: false,
+  lapStart: null,
+  lapNum: 1,
+  laps: [],
+  bestLapMs: null, bestLap: null,
+  hasCrossed: false,
+  timerInt: null,
   watchId: null,
-  hasCrossed: false,      // first crossing detection guard
+  // Track geometry
+  trackPoints: [],   // all GPS points ever in session
+  lap1Points: [],    // GPS points from lap 1 only (used to compute sectors)
+  mapBounds: null,
+  // Automatic sectors — null until computed after lap 1
+  autoSectors: null,         // [{centre,p1,p2,distFromStart}] length 2 (the two split points)
+  sectorTimes: [null,null,null],
+  sectorBest:  [null,null,null],
+  currentSector: 0,          // 0,1,2 — which sector car is currently in
+  lap1Complete: false,
 };
 
-// Persist last line
-function saveLastLine() {
-  if (state.startLine) {
-    localStorage.setItem('lapforge_line', JSON.stringify({
-      line: state.startLine,
-      p1: state.lineP1,
-      p2: state.lineP2
-    }));
-  }
+// ═══════════════════════════════════════════════
+// UTILS
+// ═══════════════════════════════════════════════
+const Rearth = 6371000;
+const toRad = d => d * Math.PI / 180;
+const toDeg = r => r * 180 / Math.PI;
+
+function fmtTime(ms) {
+  if (ms == null) return '—';
+  const neg = ms < 0; ms = Math.abs(ms);
+  const m = Math.floor(ms/60000);
+  const s = Math.floor((ms%60000)/1000);
+  const ms3 = Math.floor(ms%1000);
+  return (neg?'-':'')+`${m}:${String(s).padStart(2,'0')}.${String(ms3).padStart(3,'0')}`;
 }
-function loadLastLine() {
-  try {
-    const d = JSON.parse(localStorage.getItem('lapforge_line'));
-    if (d) { state.startLine = d.line; state.lineP1 = d.p1; state.lineP2 = d.p2; return true; }
-  } catch(e) {}
+
+function fmtDelta(ms) {
+  if (ms == null) return '—';
+  return (ms >= 0 ? '+' : '') + fmtTime(ms);
+}
+
+// Haversine distance in metres
+function distM(a, b) {
+  const φ1=toRad(a.lat),φ2=toRad(b.lat),Δφ=toRad(b.lat-a.lat),Δλ=toRad(b.lon-a.lon);
+  const x=Math.sin(Δφ/2)**2+Math.cos(φ1)*Math.cos(φ2)*Math.sin(Δλ/2)**2;
+  return Rearth*2*Math.atan2(Math.sqrt(x),Math.sqrt(1-x));
+}
+
+function destPoint(lat, lon, brg, dist) {
+  const δ=dist/Rearth,θ=toRad(brg),φ1=toRad(lat),λ1=toRad(lon);
+  const φ2=Math.asin(Math.sin(φ1)*Math.cos(δ)+Math.cos(φ1)*Math.sin(δ)*Math.cos(θ));
+  const λ2=λ1+Math.atan2(Math.sin(θ)*Math.sin(δ)*Math.cos(φ1),Math.cos(δ)-Math.sin(φ1)*Math.sin(φ2));
+  return {lat:toDeg(φ2),lon:toDeg(λ2)};
+}
+
+function bearingBetween(a, b) {
+  const φ1=toRad(a.lat),φ2=toRad(b.lat),Δλ=toRad(b.lon-a.lon);
+  const y=Math.sin(Δλ)*Math.cos(φ2);
+  const x=Math.cos(φ1)*Math.sin(φ2)-Math.sin(φ1)*Math.cos(φ2)*Math.cos(Δλ);
+  return (toDeg(Math.atan2(y,x))+360)%360;
+}
+
+// Flat-projection segment intersection
+function crosses(a1,a2,b1,b2){
+  const toXY=c=>({x:c.lon*Math.cos(toRad(c.lat)),y:c.lat});
+  function cross2(o,a,b){return(a.x-o.x)*(b.y-o.y)-(a.y-o.y)*(b.x-o.x)}
+  function onSeg(p,a,b){return Math.min(a.x,b.x)<=p.x&&p.x<=Math.max(a.x,b.x)&&Math.min(a.y,b.y)<=p.y&&p.y<=Math.max(a.y,b.y)}
+  const A1=toXY(a1),A2=toXY(a2),B1=toXY(b1),B2=toXY(b2);
+  const d1=cross2(B1,B2,A1),d2=cross2(B1,B2,A2),d3=cross2(A1,A2,B1),d4=cross2(A1,A2,B2);
+  if(((d1>0&&d2<0)||(d1<0&&d2>0))&&((d3>0&&d4<0)||(d3<0&&d4>0)))return true;
+  if(d1===0&&onSeg(A1,B1,B2))return true;
+  if(d2===0&&onSeg(A2,B1,B2))return true;
+  if(d3===0&&onSeg(B1,A1,A2))return true;
+  if(d4===0&&onSeg(B2,A1,A2))return true;
   return false;
 }
 
-// ── GPS ──
-function startGPS() {
-  if (!navigator.geolocation) { updateGPSUI('error', 'GPS not available'); return; }
-  state.watchId = navigator.geolocation.watchPosition(onGPS, onGPSError, {
-    enableHighAccuracy: true, maximumAge: 500, timeout: 10000
-  });
+function makeLine(lat, lon, hdg) {
+  const perp=(hdg+90)%360;
+  return {
+    centre:{lat,lon},
+    p1:destPoint(lat,lon,perp,25),
+    p2:destPoint(lat,lon,(perp+180)%360,25)
+  };
 }
 
-function onGPS(pos) {
+// ═══════════════════════════════════════════════
+// AUTO SECTOR COMPUTATION
+// Called after lap 1 completes with the recorded GPS points
+// ═══════════════════════════════════════════════
+function computeAutoSectors(points) {
+  if (points.length < 6) return null;
+
+  // Build cumulative distance array along the path
+  const cumDist = [0];
+  for (let i = 1; i < points.length; i++) {
+    cumDist.push(cumDist[i-1] + distM(points[i-1], points[i]));
+  }
+  const totalDist = cumDist[cumDist.length - 1];
+  if (totalDist < 50) return null; // too short
+
+  // Find the point index closest to 33% and 66% of total distance
+  const targets = [totalDist / 3, (totalDist * 2) / 3];
+  const sectors = targets.map(target => {
+    let bestIdx = 0, bestDiff = Infinity;
+    for (let i = 0; i < cumDist.length; i++) {
+      const diff = Math.abs(cumDist[i] - target);
+      if (diff < bestDiff) { bestDiff = diff; bestIdx = i; }
+    }
+    const pt = points[bestIdx];
+    // Bearing at that point (average of approach + departure)
+    const prev = points[Math.max(0, bestIdx-1)];
+    const next = points[Math.min(points.length-1, bestIdx+1)];
+    const brg = bearingBetween(prev, next);
+    const perp = (brg + 90) % 360;
+    return {
+      centre: {lat:pt.lat, lon:pt.lon},
+      p1: destPoint(pt.lat, pt.lon, perp, 25),
+      p2: destPoint(pt.lat, pt.lon, (perp+180)%360, 25),
+      distFromStart: cumDist[bestIdx]
+    };
+  });
+
+  return sectors; // array of 2 split points → defines 3 sectors
+}
+
+function activateSectors(sectors) {
+  S.autoSectors = sectors;
+  S.sectorTimes = [null,null,null];
+  S.currentSector = 0;
+
+  // Show sector grid, hide learning msg
+  document.getElementById('sectors-learning').style.display = 'none';
+  document.getElementById('sectors-grid').style.display = 'flex';
+  document.getElementById('rb-sec').textContent = 'Sectors: 3 active';
+  document.getElementById('rb-sec-dot').style.background = 'var(--green)';
+
+  // Save sectors with line
+  saveState();
+  drawMap(); // redraw to show sector lines
+}
+
+// ═══════════════════════════════════════════════
+// GPS
+// ═══════════════════════════════════════════════
+function startGPS() {
+  if (!navigator.geolocation) { setGPSUI('bad','No GPS'); return; }
+  S.watchId = navigator.geolocation.watchPosition(onPos, onPosErr,
+    {enableHighAccuracy:true, maximumAge:500, timeout:10000});
+}
+
+function onPos(raw) {
   const p = {
-    lat: pos.coords.latitude,
-    lon: pos.coords.longitude,
-    speed: pos.coords.speed != null ? pos.coords.speed * 3.6 : null, // m/s → km/h
-    heading: pos.coords.heading,
-    accuracy: pos.coords.accuracy
+    lat: raw.coords.latitude,
+    lon: raw.coords.longitude,
+    speed: raw.coords.speed != null ? raw.coords.speed * 3.6 : null,
+    heading: raw.coords.heading,
+    accuracy: raw.coords.accuracy,
+    ts: raw.timestamp
   };
-  state.prevPos = state.gpsPos;
-  state.gpsPos = p;
+  S.prevPos = S.pos;
+  S.pos = p;
 
-  const acc = p.accuracy;
-  const quality = acc < 10 ? 'good' : acc < 30 ? 'ok' : 'bad';
-  const label = `GPS · ±${Math.round(acc)}m`;
-  updateGPSUI(quality, label);
+  const acc = Math.round(p.accuracy);
+  const q = acc<10?'good':acc<30?'ok':'bad';
+  setGPSUI(q,`GPS ±${acc}m`);
 
-  // Setup screen
-  const coordEl = document.getElementById('setup-coords');
-  const accEl = document.getElementById('setup-accuracy');
-  if (coordEl) {
-    coordEl.textContent = `${p.lat.toFixed(6)}, ${p.lon.toFixed(6)}`;
-    coordEl.classList.remove('pending');
+  // Setup screen live updates
+  const ce=document.getElementById('su-coords');
+  if(ce){ce.textContent=`${p.lat.toFixed(6)}, ${p.lon.toFixed(6)}`;ce.classList.remove('dim')}
+  const ae=document.getElementById('su-acc');
+  if(ae){ae.textContent=`±${acc}m`;ae.className='card-value'+(acc<20?'':' dim')}
+  const btn=document.getElementById('btn-set-line');
+  if(btn) btn.disabled = acc>50;
+
+  if (!S.active) return;
+
+  // Update HUD displays
+  const spd = p.speed!=null ? Math.round(p.speed) : 0;
+  document.getElementById('rt-speed').textContent = spd;
+  document.getElementById('mb-spd').innerHTML = `${spd} <span>km/h</span>`;
+  document.getElementById('mb-acc').innerHTML = `Acc <span>±${acc}m</span>`;
+  document.getElementById('rb-coords').textContent = `${p.lat.toFixed(4)}, ${p.lon.toFixed(4)}`;
+
+  // Track & map
+  S.trackPoints.push({lat:p.lat, lon:p.lon});
+  if (!S.lap1Complete) S.lap1Points.push({lat:p.lat, lon:p.lon});
+  updateMapBounds(p.lat, p.lon);
+  drawMap();
+  updateCarDot(p.lat, p.lon);
+
+  if (S.prevPos) {
+    checkLineCrossing(S.prevPos, p);
+    if (S.autoSectors) checkSectorCrossings(S.prevPos, p);
   }
-  if (accEl) {
-    accEl.textContent = `±${Math.round(acc)} metres`;
-    accEl.className = 'coord-value ' + (acc < 15 ? '' : 'pending');
+}
+
+function onPosErr() { setGPSUI('bad','GPS error'); }
+
+function setGPSUI(q, label) {
+  ['h','su'].forEach(id=>{
+    const d=document.getElementById(id+'-dot');
+    const t=document.getElementById(id+'-gps');
+    if(d) d.className='gdot '+q;
+    if(t) t.textContent=label;
+  });
+  const rd=document.getElementById('rb-gps-dot');
+  const rt=document.getElementById('rb-gps');
+  if(rd) rd.style.background=q==='good'?'var(--green)':q==='ok'?'var(--orange)':'var(--red)';
+  if(rt) rt.textContent=label;
+}
+
+// ═══════════════════════════════════════════════
+// LINE CROSSING
+// ═══════════════════════════════════════════════
+function checkLineCrossing(prev, cur) {
+  if (!S.lineP1 || !S.lineP2) return;
+  if (!crosses(prev, cur, S.lineP1, S.lineP2)) return;
+
+  const now = Date.now();
+
+  if (!S.hasCrossed) {
+    // First crossing — start timer, start recording lap 1
+    S.hasCrossed = true;
+    S.lapStart = now;
+    S.currentSector = 0;
+    S.sectorTimes = [null,null,null];
+    S.lap1Points = [{lat:cur.lat, lon:cur.lon}]; // start fresh for sector learning
+    document.getElementById('race-status').textContent = 'Lap 1 · Learning…';
+    flash();
+    return;
   }
-  const setBtn = document.getElementById('btn-set-line');
-  if (setBtn) setBtn.disabled = acc > 50;
 
-  // Race screen updates
-  if (state.sessionActive) {
-    const spd = p.speed != null ? Math.round(p.speed) : '—';
-    document.getElementById('speed-display').innerHTML = `${spd} <span style="font-size:13px;color:var(--muted)">km/h</span>`;
-    document.getElementById('race-coords').textContent = `${p.lat.toFixed(4)}, ${p.lon.toFixed(4)}`;
+  const elapsed = now - S.lapStart;
+  if (elapsed < 5000) return; // debounce
 
-    if (state.startLine && state.prevPos) {
-      checkLineCrossing(state.prevPos, p);
+  // Complete current sector time (sector 3 ends at finish)
+  if (S.autoSectors) {
+    const sec2end = elapsed;
+    S.sectorTimes[2] = elapsed - (S.sectorTimes[0]||0) - (S.sectorTimes[1]||0);
+    updateBestSector(2, S.sectorTimes[2]);
+    updateSectorDisplay(2, S.sectorTimes[2], 2);
+  }
+
+  recordLap(elapsed, cur.speed);
+
+  // After lap 1, compute sectors from the recorded path
+  if (!S.lap1Complete && S.laps.length === 1) {
+    S.lap1Complete = true;
+    const computed = computeAutoSectors(S.lap1Points);
+    if (computed) {
+      activateSectors(computed);
+    } else {
+      document.getElementById('sectors-learning').textContent = 'Not enough GPS data for sectors';
     }
   }
 }
 
-function onGPSError(err) {
-  updateGPSUI('bad', 'GPS error: ' + err.message);
-}
-
-function updateGPSUI(quality, label) {
-  ['home','setup','race'].forEach(id => {
-    const dot = document.getElementById(id+'-gps-dot');
-    const txt = document.getElementById(id+'-gps-text');
-    if (dot) { dot.className = 'gps-dot ' + quality; }
-    if (txt) txt.textContent = label;
-  });
-  const raceDot = document.getElementById('race-gps-dot');
-  if (raceDot) {
-    raceDot.style.background = quality === 'good' ? 'var(--green)' : quality === 'ok' ? 'var(--orange)' : 'var(--accent2)';
-  }
-}
-
-// ── MATH ──
-const R = 6371000; // Earth radius metres
-
-function toRad(d) { return d * Math.PI / 180; }
-function toDeg(r) { return r * 180 / Math.PI; }
-
-function bearing(lat1, lon1, lat2, lon2) {
-  const φ1=toRad(lat1), φ2=toRad(lat2), Δλ=toRad(lon2-lon1);
-  const y = Math.sin(Δλ)*Math.cos(φ2);
-  const x = Math.cos(φ1)*Math.sin(φ2) - Math.sin(φ1)*Math.cos(φ2)*Math.cos(Δλ);
-  return (toDeg(Math.atan2(y,x)) + 360) % 360;
-}
-
-function destPoint(lat, lon, bearingDeg, distM) {
-  const δ = distM / R;
-  const θ = toRad(bearingDeg);
-  const φ1 = toRad(lat), λ1 = toRad(lon);
-  const φ2 = Math.asin(Math.sin(φ1)*Math.cos(δ) + Math.cos(φ1)*Math.sin(δ)*Math.cos(θ));
-  const λ2 = λ1 + Math.atan2(Math.sin(θ)*Math.sin(δ)*Math.cos(φ1), Math.cos(δ)-Math.sin(φ1)*Math.sin(φ2));
-  return { lat: toDeg(φ2), lon: toDeg(λ2) };
-}
-
-// Segment intersection — the core lap detection algorithm
-// Returns true if segment A1→A2 crosses segment B1→B2
-function segmentsIntersect(a1, a2, b1, b2) {
-  function cross2D(o, a, b) {
-    return (a.x-o.x)*(b.y-o.y) - (a.y-o.y)*(b.x-o.x);
-  }
-  function onSegment(p, a, b) {
-    return Math.min(a.x,b.x) <= p.x && p.x <= Math.max(a.x,b.x) &&
-           Math.min(a.y,b.y) <= p.y && p.y <= Math.max(a.y,b.y);
-  }
-  // Project to flat coords (fine for small distances)
-  const toXY = (c) => ({ x: c.lon * Math.cos(toRad(c.lat)), y: c.lat });
-  const A1=toXY(a1), A2=toXY(a2), B1=toXY(b1), B2=toXY(b2);
-  const d1=cross2D(B1,B2,A1), d2=cross2D(B1,B2,A2);
-  const d3=cross2D(A1,A2,B1), d4=cross2D(A1,A2,B2);
-  if (((d1>0&&d2<0)||(d1<0&&d2>0)) && ((d3>0&&d4<0)||(d3<0&&d4>0))) return true;
-  if (d1===0 && onSegment(A1,B1,B2)) return true;
-  if (d2===0 && onSegment(A2,B1,B2)) return true;
-  if (d3===0 && onSegment(B1,A1,A2)) return true;
-  if (d4===0 && onSegment(B2,A1,A2)) return true;
-  return false;
-}
-
-function checkLineCrossing(prevPos, curPos) {
-  if (!state.lineP1 || !state.lineP2) return;
-  const crossed = segmentsIntersect(prevPos, curPos, state.lineP1, state.lineP2);
-  if (!crossed) return;
-
+// ═══════════════════════════════════════════════
+// SECTOR CROSSINGS
+// ═══════════════════════════════════════════════
+function checkSectorCrossings(prev, cur) {
+  if (!S.hasCrossed || !S.autoSectors) return;
   const now = Date.now();
 
-  if (!state.hasCrossed) {
-    // First crossing — just start the timer
-    state.hasCrossed = true;
-    state.lapStartTime = now;
-    state.currentLapNum = 1;
-    document.getElementById('lap-count-display').textContent = 'LAP 1 · TIMING STARTED';
-    flashCross();
-    return;
+  // S.autoSectors has 2 split points → sectors 0→1 and 1→2
+  S.autoSectors.forEach((split, i) => {
+    // Only allow crossing in order: must be in sector i to cross into i+1
+    if (S.currentSector !== i) return;
+    if (!crosses(prev, cur, split.p1, split.p2)) return;
+
+    const elapsed = now - S.lapStart;
+    // Debounce: must be at least 3s after lap start or last sector
+    if (elapsed < 3000) return;
+
+    // Record time for sector i
+    const prevSectorTotal = i === 0 ? 0 : (S.sectorTimes.slice(0,i).reduce((a,b)=>(a||0)+(b||0),0));
+    const secTime = elapsed - prevSectorTotal;
+    S.sectorTimes[i] = secTime;
+    S.currentSector = i + 1;
+
+    updateBestSector(i, secTime);
+    updateSectorDisplay(i, secTime, i);
+  });
+}
+
+function updateBestSector(idx, ms) {
+  if (S.sectorBest[idx] == null || ms < S.sectorBest[idx]) {
+    S.sectorBest[idx] = ms;
+  }
+}
+
+function updateSectorDisplay(idx, ms, sector) {
+  const el = document.getElementById(`st-${idx}`);
+  const cell = document.getElementById(`sc-${idx}`);
+  if (!el || !cell) return;
+  el.textContent = fmtTime(ms);
+  const isBest = S.sectorBest[idx] === ms;
+  cell.className = 's-cell ' + (isBest ? 's-best' : 's-slow');
+  el.className = 's-time ' + (isBest ? 'best' : 'slow');
+}
+
+function resetSectorDisplaysForNewLap() {
+  [0,1,2].forEach(i => {
+    const el = document.getElementById(`st-${i}`);
+    const cell = document.getElementById(`sc-${i}`);
+    if (el) { el.textContent = '—'; el.className = 's-time live'; }
+    if (cell) cell.className = 's-cell s-active';
+  });
+  // Highlight current sector
+  const c0 = document.getElementById('sc-0');
+  if (c0) c0.className = 's-cell s-active';
+}
+
+// ═══════════════════════════════════════════════
+// LAP RECORDING
+// ═══════════════════════════════════════════════
+function recordLap(ms, speed) {
+  const lapTime = fmtTime(ms);
+  const spd = speed != null ? Math.round(speed) : null;
+  const delta = S.bestLapMs != null ? ms - S.bestLapMs : null;
+
+  if (S.bestLapMs == null || ms < S.bestLapMs) {
+    S.bestLapMs = ms;
+    S.bestLap = lapTime;
+    document.getElementById('rt-best').textContent = lapTime;
   }
 
-  // Debounce: ignore crossings within 5 seconds of last one
-  const elapsed = now - state.lapStartTime;
-  if (elapsed < 5000) return;
+  const lap = {num:S.lapNum, ms, time:lapTime, speed:spd, delta, sectors:[...S.sectorTimes]};
+  S.laps.push(lap);
 
-  // Record lap
-  const lapMs = elapsed;
-  const lapTime = formatTime(lapMs);
-  const spd = curPos.speed != null ? Math.round(curPos.speed) : null;
-
-  let delta = null;
-  if (state.bestLap !== null) {
-    delta = lapMs - state.bestLap;
-  }
-
-  if (state.bestLap === null || lapMs < state.bestLap) {
-    state.bestLap = lapMs;
-    document.getElementById('best-lap-display').textContent = lapTime;
-  }
-
-  state.laps.push({ num: state.currentLapNum, ms: lapMs, time: lapTime, speed: spd, delta });
-  addLapRow(state.laps[state.laps.length - 1]);
-  updateDelta(delta);
+  document.getElementById('rt-last').textContent = lapTime;
+  document.getElementById('rt-laps').textContent = S.laps.length;
+  renderLapRow(lap);
+  flash();
 
   // Reset for next lap
-  state.lapStartTime = now;
-  state.currentLapNum++;
-  document.getElementById('lap-count-display').textContent = `LAP ${state.currentLapNum} · IN PROGRESS`;
-  flashCross();
+  S.lapStart = Date.now();
+  S.lapNum++;
+  S.currentSector = 0;
+  S.sectorTimes = [null,null,null];
+  resetSectorDisplaysForNewLap();
+
+  document.getElementById('lap-badge').textContent = `LAP ${S.lapNum}`;
+  document.getElementById('race-status').textContent = S.lap1Complete ? 'Timing…' : 'Lap 1 · Learning…';
+  document.getElementById('rt-delta').textContent = '—';
+  document.getElementById('rt-delta').className = 'delta-val';
   saveLaps();
 }
 
-function flashCross() {
-  const el = document.getElementById('cross-flash');
-  const timer = document.getElementById('timer-display');
-  el.classList.add('show');
-  timer.classList.add('crossed');
-  setTimeout(() => { el.classList.remove('show'); timer.classList.remove('crossed'); }, 400);
-}
-
-// ── TIMER ──
-function formatTime(ms) {
-  const m = Math.floor(ms/60000);
-  const s = Math.floor((ms%60000)/1000);
-  const cs = Math.floor((ms%1000)/10);
-  return `${m}:${String(s).padStart(2,'0')}.${String(Math.floor(ms%1000)).padStart(3,'0')}`;
-}
-
-function startTimer() {
-  state.timerInterval = setInterval(() => {
-    if (!state.lapStartTime || !state.hasCrossed) return;
-    const elapsed = Date.now() - state.lapStartTime;
-    document.getElementById('timer-display').textContent = formatTime(elapsed);
-  }, 50);
-}
-
-// ── LAP ROWS ──
-function addLapRow(lap) {
-  const isBest = state.bestLap === lap.ms;
-  const deltaStr = lap.delta !== null
-    ? (lap.delta >= 0 ? '+' : '') + formatTime(Math.abs(lap.delta))
-    : '—';
-  const deltaClass = lap.delta === null ? '' : (lap.delta > 0 ? 'pos' : 'neg');
-
-  const row = document.createElement('div');
-  row.className = 'lap-row' + (isBest ? ' best-lap' : '');
-  row.innerHTML = `
-    <span class="lap-num">${lap.num}</span>
-    <span class="lap-time">${lap.time}</span>
-    <span class="lap-delta ${deltaClass}">${deltaStr}</span>
-    <span class="lap-speed">${lap.speed !== null ? lap.speed : '—'}</span>
-  `;
-
-  // Re-render all rows to update best-lap highlight
-  const container = document.getElementById('lap-rows');
-  container.innerHTML = '';
-  state.laps.slice().reverse().forEach(l => {
-    const iB = state.bestLap === l.ms;
-    const dS = l.delta !== null ? (l.delta>=0?'+':'')+formatTime(Math.abs(l.delta)) : '—';
-    const dC = l.delta===null?'':(l.delta>0?'pos':'neg');
-    const r = document.createElement('div');
-    r.className = 'lap-row'+(iB?' best-lap':'');
-    r.innerHTML = `<span class="lap-num">${l.num}</span><span class="lap-time">${l.time}</span><span class="lap-delta ${dC}">${dS}</span><span class="lap-speed">${l.speed!==null?l.speed:'—'}</span>`;
-    container.appendChild(r);
+function renderLapRow(lap) {
+  const dStr = fmtDelta(lap.delta);
+  const dCls = lap.delta==null?'':(lap.delta>0?'pos':'neg');
+  const scroll = document.getElementById('lap-scroll');
+  // Rebuild all rows to keep best highlight correct
+  scroll.innerHTML = '';
+  [...S.laps].reverse().forEach(l => {
+    const isBest = S.bestLapMs === l.ms;
+    const ds = fmtDelta(l.delta);
+    const dc = l.delta==null?'':(l.delta>0?'pos':'neg');
+    const row = document.createElement('div');
+    row.className = 'lap-entry'+(isBest?' best':'');
+    row.innerHTML = `<span class="le-num">${l.num}</span><span class="le-time">${l.time}</span><span class="le-delta ${dc}">${ds}</span>`;
+    scroll.appendChild(row);
   });
 }
 
-function updateDelta(delta) {
-  const el = document.getElementById('delta-display');
-  if (delta === null) { el.textContent = '—'; el.style.color = 'var(--muted)'; return; }
-  el.textContent = (delta >= 0 ? '+' : '') + formatTime(Math.abs(delta));
-  el.style.color = delta > 0 ? 'var(--accent2)' : 'var(--green)';
+function flash() {
+  const cf=document.getElementById('cf');
+  const t=document.getElementById('rt-timer');
+  cf.classList.add('show');t.classList.add('crossed');
+  setTimeout(()=>{cf.classList.remove('show');t.classList.remove('crossed')},320);
 }
 
-// ── ACTIONS ──
-function showScreen(id) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-}
-
-function goSetup() {
-  showScreen('setup');
-}
-
-function setStartLine() {
-  if (!state.gpsPos) return;
-  const p = state.gpsPos;
-
-  // Use heading if available, else default to north
-  const heading = (p.heading != null && !isNaN(p.heading)) ? p.heading : 0;
-  // Perpendicular = heading + 90
-  const perpBearing = (heading + 90) % 360;
-
-  state.startLine = { lat: p.lat, lon: p.lon, bearing: perpBearing };
-  // Extend 25m each side of the line
-  state.lineP1 = destPoint(p.lat, p.lon, perpBearing, 25);
-  state.lineP2 = destPoint(p.lat, p.lon, (perpBearing + 180) % 360, 25);
-
-  saveLastLine();
-  startSession();
-}
-
-function setManualLine() {
-  const lat = parseFloat(document.getElementById('manual-lat').value);
-  const lon = parseFloat(document.getElementById('manual-lon').value);
-  if (isNaN(lat) || isNaN(lon)) { alert('Enter valid coordinates'); return; }
-  state.startLine = { lat, lon, bearing: 90 };
-  state.lineP1 = destPoint(lat, lon, 90, 25);
-  state.lineP2 = destPoint(lat, lon, 270, 25);
-  saveLastLine();
+// ═══════════════════════════════════════════════
+// SESSION CONTROL
+// ═══════════════════════════════════════════════
+function setLineAndStart() {
+  if (!S.pos) return;
+  const hdg = (S.pos.heading!=null&&!isNaN(S.pos.heading)) ? S.pos.heading : 0;
+  const l = makeLine(S.pos.lat, S.pos.lon, hdg);
+  S.line=l.centre; S.lineP1=l.p1; S.lineP2=l.p2;
+  S.autoSectors = null; // will be computed after lap 1
+  saveState();
   startSession();
 }
 
 function quickStart() {
-  if (loadLastLine()) startSession();
+  loadState();
+  if (S.line) startSession();
 }
 
 function startSession() {
-  state.sessionActive = true;
-  state.hasCrossed = false;
-  state.lapStartTime = null;
-  state.currentLapNum = 1;
-  state.laps = [];
-  state.bestLap = null;
-  document.getElementById('lap-rows').innerHTML = '';
-  document.getElementById('timer-display').textContent = '0:00.000';
-  document.getElementById('best-lap-display').textContent = '—';
-  document.getElementById('delta-display').textContent = '—';
-  document.getElementById('speed-display').innerHTML = '0 <span style="font-size:13px;color:var(--muted)">km/h</span>';
-  document.getElementById('lap-count-display').textContent = 'LAP 1 · CROSS THE LINE TO START';
-  document.getElementById('line-info').textContent = `Line @ ${state.startLine.lat.toFixed(4)}, ${state.startLine.lon.toFixed(4)}`;
+  S.active=true; S.hasCrossed=false; S.lapStart=null;
+  S.lapNum=1; S.laps=[]; S.bestLapMs=null; S.bestLap=null;
+  S.trackPoints=[]; S.lap1Points=[]; S.mapBounds=null;
+  S.sectorTimes=[null,null,null]; S.sectorBest=[null,null,null];
+  S.currentSector=0; S.lap1Complete=false;
 
-  // Keep screen awake
-  if ('wakeLock' in navigator) {
-    navigator.wakeLock.request('screen').catch(()=>{});
+  // Reset if quick-starting with saved sectors
+  if (S.autoSectors) {
+    document.getElementById('sectors-learning').style.display='none';
+    document.getElementById('sectors-grid').style.display='flex';
+    document.getElementById('rb-sec').textContent='Sectors: 3 active';
+    document.getElementById('rb-sec-dot').style.background='var(--green)';
+    S.lap1Complete = true; // skip learning
+  } else {
+    document.getElementById('sectors-learning').style.display='block';
+    document.getElementById('sectors-learning').textContent='Learning on lap 1…';
+    document.getElementById('sectors-grid').style.display='none';
+    document.getElementById('rb-sec').textContent='Sectors: learning';
+    document.getElementById('rb-sec-dot').style.background='var(--muted)';
   }
 
-  startTimer();
+  document.getElementById('lap-scroll').innerHTML='';
+  document.getElementById('rt-timer').textContent='0:00.000';
+  document.getElementById('rt-best').textContent='—';
+  document.getElementById('rt-last').textContent='—';
+  document.getElementById('rt-laps').textContent='0';
+  document.getElementById('rt-delta').textContent='—';
+  document.getElementById('rt-delta').className='delta-val';
+  document.getElementById('lap-badge').textContent='LAP 1';
+  document.getElementById('race-status').textContent='Cross line to start';
+  document.getElementById('rb-line')||(()=>{})();
+
+  initCanvas();
+  if('wakeLock' in navigator) navigator.wakeLock.request('screen').catch(()=>{});
+
+  S.timerInt = setInterval(()=>{
+    if (!S.hasCrossed||!S.lapStart) return;
+    const elapsed = Date.now()-S.lapStart;
+    document.getElementById('rt-timer').textContent = fmtTime(elapsed);
+    // Live delta
+    if (S.bestLapMs!=null) {
+      const d = elapsed-S.bestLapMs;
+      const el = document.getElementById('rt-delta');
+      el.textContent = fmtDelta(d);
+      el.className = 'delta-val '+(d>0?'pos':'neg');
+    }
+    // Highlight active sector cell
+    if (S.autoSectors) {
+      [0,1,2].forEach(i=>{
+        const cell=document.getElementById(`sc-${i}`);
+        if(!cell) return;
+        const isCurrent = S.currentSector===i && S.sectorTimes[i]==null;
+        if(isCurrent) cell.classList.add('s-active');
+      });
+    }
+  },50);
+
   showScreen('race');
 }
 
-function stopSession() {
-  state.sessionActive = false;
-  clearInterval(state.timerInterval);
+function endSession() {
+  S.active=false;
+  clearInterval(S.timerInt);
   saveLaps();
-  buildResultsScreen();
+  buildResults();
   showScreen('results');
 }
 
-function saveLaps() {
-  if (state.laps.length > 0) {
-    localStorage.setItem('lapforge_session', JSON.stringify({
-      laps: state.laps, best: state.bestLap, date: new Date().toISOString()
-    }));
-    document.getElementById('btn-quick-start').disabled = false;
+// ═══════════════════════════════════════════════
+// CANVAS MAP
+// ═══════════════════════════════════════════════
+function initCanvas() {
+  const area=document.getElementById('map-area');
+  const canvas=document.getElementById('track-canvas');
+  canvas.width=area.clientWidth; canvas.height=area.clientHeight;
+  const ctx=canvas.getContext('2d');
+  ctx.fillStyle='#0a0a0b'; ctx.fillRect(0,0,canvas.width,canvas.height);
+  ctx.font='13px "Barlow Condensed",sans-serif';
+  ctx.fillStyle='#55555f'; ctx.textAlign='center';
+  ctx.fillText('Drive to build the track map',canvas.width/2,canvas.height/2);
+  document.getElementById('car-dot').style.display='none';
+}
+
+function updateMapBounds(lat,lon) {
+  if(!S.mapBounds){S.mapBounds={minLat:lat,maxLat:lat,minLon:lon,maxLon:lon};return}
+  if(lat<S.mapBounds.minLat) S.mapBounds.minLat=lat;
+  if(lat>S.mapBounds.maxLat) S.mapBounds.maxLat=lat;
+  if(lon<S.mapBounds.minLon) S.mapBounds.minLon=lon;
+  if(lon>S.mapBounds.maxLon) S.mapBounds.maxLon=lon;
+}
+
+function llToCanvas(lat,lon) {
+  const canvas=document.getElementById('track-canvas');
+  const pad=44, b=S.mapBounds;
+  const latR=b.maxLat-b.minLat||0.0001;
+  const lonR=b.maxLon-b.minLon||0.0001;
+  const scale=Math.min((canvas.width-pad*2)/lonR,(canvas.height-pad*2)/latR);
+  const offX=(canvas.width-lonR*scale)/2;
+  const offY=(canvas.height-latR*scale)/2;
+  return {x:offX+(lon-b.minLon)*scale, y:canvas.height-offY-(lat-b.minLat)*scale};
+}
+
+function drawMap() {
+  const canvas=document.getElementById('track-canvas');
+  const ctx=canvas.getContext('2d');
+  const area=document.getElementById('map-area');
+  if(canvas.width!==area.clientWidth||canvas.height!==area.clientHeight){
+    canvas.width=area.clientWidth; canvas.height=area.clientHeight;
+  }
+  ctx.fillStyle='#0a0a0b'; ctx.fillRect(0,0,canvas.width,canvas.height);
+  if(S.trackPoints.length<2) return;
+
+  // Full track (dark)
+  ctx.beginPath(); ctx.strokeStyle='#222230'; ctx.lineWidth=10; ctx.lineCap='round'; ctx.lineJoin='round';
+  const fp=llToCanvas(S.trackPoints[0].lat,S.trackPoints[0].lon);
+  ctx.moveTo(fp.x,fp.y);
+  S.trackPoints.forEach(pt=>{const p=llToCanvas(pt.lat,pt.lon);ctx.lineTo(p.x,p.y)});
+  ctx.stroke();
+
+  // Centre line
+  ctx.beginPath(); ctx.strokeStyle='#3a3a55'; ctx.lineWidth=2;
+  ctx.moveTo(fp.x,fp.y);
+  S.trackPoints.forEach(pt=>{const p=llToCanvas(pt.lat,pt.lon);ctx.lineTo(p.x,p.y)});
+  ctx.stroke();
+
+  // Current lap trail (last 80 pts, yellow fading)
+  if (S.trackPoints.length>1) {
+    const n=Math.min(S.trackPoints.length,80);
+    const si=S.trackPoints.length-n;
+    ctx.beginPath(); ctx.lineWidth=3; ctx.lineCap='round'; ctx.lineJoin='round';
+    // Use gradient opacity
+    for(let i=si;i<S.trackPoints.length-1;i++){
+      const alpha=(i-si)/n;
+      ctx.strokeStyle=`rgba(232,255,71,${alpha*0.7})`;
+      const a=llToCanvas(S.trackPoints[i].lat,S.trackPoints[i].lon);
+      const b=llToCanvas(S.trackPoints[i+1].lat,S.trackPoints[i+1].lon);
+      ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y); ctx.stroke();
+    }
+  }
+
+  // Start/finish line
+  if(S.lineP1&&S.lineP2){
+    const lp1=llToCanvas(S.lineP1.lat,S.lineP1.lon);
+    const lp2=llToCanvas(S.lineP2.lat,S.lineP2.lon);
+    ctx.beginPath(); ctx.strokeStyle='#e8ff47'; ctx.lineWidth=3; ctx.setLineDash([7,5]);
+    ctx.moveTo(lp1.x,lp1.y); ctx.lineTo(lp2.x,lp2.y); ctx.stroke(); ctx.setLineDash([]);
+    const mid=llToCanvas(S.line.lat,S.line.lon);
+    ctx.fillStyle='#e8ff47'; ctx.font='bold 11px "Barlow Condensed"'; ctx.textAlign='center';
+    ctx.fillText('S/F',mid.x,mid.y-9);
+  }
+
+  // Auto sector lines
+  if(S.autoSectors){
+    const sColors=['#47aaff','#b47fff'];
+    const sLabels=['S1/S2','S2/S3'];
+    S.autoSectors.forEach((sec,i)=>{
+      const sp1=llToCanvas(sec.p1.lat,sec.p1.lon);
+      const sp2=llToCanvas(sec.p2.lat,sec.p2.lon);
+      ctx.beginPath(); ctx.strokeStyle=sColors[i]; ctx.lineWidth=2.5; ctx.setLineDash([5,4]);
+      ctx.moveTo(sp1.x,sp1.y); ctx.lineTo(sp2.x,sp2.y); ctx.stroke(); ctx.setLineDash([]);
+      const mid=llToCanvas(sec.centre.lat,sec.centre.lon);
+      ctx.fillStyle=sColors[i]; ctx.font='bold 10px "Barlow Condensed"'; ctx.textAlign='center';
+      ctx.fillText(sLabels[i],mid.x,mid.y-8);
+    });
+  }
+
+  // Sector colour zones on track (subtle tint)
+  if(S.autoSectors&&S.trackPoints.length>10){
+    const totalPts=S.trackPoints.length;
+    const zoneColors=['rgba(71,170,255,0.12)','rgba(180,127,255,0.12)','rgba(57,255,133,0.12)'];
+    // Estimate sector boundaries by distance
+    const cumD=[0];
+    for(let i=1;i<S.trackPoints.length;i++) cumD.push(cumD[i-1]+distM(S.trackPoints[i-1],S.trackPoints[i]));
+    const total=cumD[cumD.length-1];
+    if(total>0){
+      const splitDists=[S.autoSectors[0].distFromStart||total/3, S.autoSectors[1].distFromStart||total*2/3];
+      let zone=0;
+      S.trackPoints.forEach((pt,i)=>{
+        if(zone<2&&cumD[i]>splitDists[zone]) zone++;
+        const p=llToCanvas(pt.lat,pt.lon);
+        ctx.fillStyle=zoneColors[zone];
+        ctx.beginPath(); ctx.arc(p.x,p.y,5,0,Math.PI*2); ctx.fill();
+      });
+    }
   }
 }
 
-function buildResultsScreen() {
-  const best = state.bestLap ? formatTime(state.bestLap) : '—';
-  document.getElementById('results-best').textContent = best;
-  document.getElementById('results-summary').textContent =
-    `${state.laps.length} LAPS · SESSION COMPLETE`;
+function updateCarDot(lat,lon){
+  const car=document.getElementById('car-dot');
+  if(!S.mapBounds||S.trackPoints.length<2){car.style.display='none';return}
+  car.style.display='block';
+  const canvas=document.getElementById('track-canvas');
+  const p=llToCanvas(lat,lon);
+  car.style.left=(p.x/canvas.width*100)+'%';
+  car.style.top=(p.y/canvas.height*100)+'%';
+  if(S.pos.heading!=null&&!isNaN(S.pos.heading)){
+    car.style.transform=`translate(-50%,-50%) rotate(${S.pos.heading}deg)`;
+  }
+}
 
-  const container = document.getElementById('results-laps');
-  container.innerHTML = '';
-  state.laps.forEach(l => {
-    const isBest = state.bestLap === l.ms;
-    const row = document.createElement('div');
-    row.className = 'result-row' + (isBest ? ' best' : '');
-    row.innerHTML = `
-      <span style="color:var(--muted)">Lap ${l.num}</span>
-      <span style="color:${isBest?'var(--green)':'var(--text)'};font-weight:${isBest?700:400}">${l.time}</span>
-      <span style="color:var(--muted);font-size:13px">${l.speed !== null ? l.speed+' km/h' : ''}</span>
-    `;
-    container.appendChild(row);
+// ═══════════════════════════════════════════════
+// PERSIST
+// ═══════════════════════════════════════════════
+function saveState(){
+  localStorage.setItem('lf3_line',JSON.stringify({
+    line:S.line,p1:S.lineP1,p2:S.lineP2,
+    autoSectors:S.autoSectors
+  }));
+}
+function loadState(){
+  try{
+    const d=JSON.parse(localStorage.getItem('lf3_line'));
+    if(d){
+      S.line=d.line; S.lineP1=d.p1; S.lineP2=d.p2;
+      S.autoSectors=d.autoSectors||null;
+      return true;
+    }
+  }catch(e){}
+  return false;
+}
+function saveLaps(){
+  if(S.laps.length>0){
+    localStorage.setItem('lf3_session',JSON.stringify({
+      laps:S.laps,bestMs:S.bestLapMs,best:S.bestLap,
+      sectorBest:S.sectorBest,date:new Date().toISOString()
+    }));
+  }
+}
+
+// ═══════════════════════════════════════════════
+// RESULTS
+// ═══════════════════════════════════════════════
+function buildResults(){
+  document.getElementById('res-best').textContent=S.bestLap||'—';
+  document.getElementById('res-summary').textContent=`${S.laps.length} LAPS · ${new Date().toLocaleDateString()}`;
+
+  // Best sectors
+  const secDiv=document.getElementById('res-sectors');
+  if(S.sectorBest.some(Boolean)){
+    secDiv.style.display='grid';
+    secDiv.innerHTML=['S1','S2','S3'].map((s,i)=>`
+      <div class="res-sec-card">
+        <div class="res-sec-label">${s} Best</div>
+        <div class="res-sec-time">${fmtTime(S.sectorBest[i])}</div>
+      </div>`).join('');
+  } else {
+    secDiv.style.display='none';
+  }
+
+  const grid=document.getElementById('res-grid');
+  grid.innerHTML='';
+  S.laps.forEach(l=>{
+    const isBest=S.bestLapMs===l.ms;
+    const dStr=fmtDelta(l.delta);
+    const dCls=l.delta==null?'':(l.delta>0?'pos':'neg');
+    const row=document.createElement('div');
+    row.className='result-row'+(isBest?' best':'');
+    row.innerHTML=`<span class="r-num">${l.num}</span><span class="r-time">${l.time}</span><span class="r-delta ${dCls}">${dStr}</span><span class="r-spd">${l.speed!=null?l.speed+' km/h':''}</span>`;
+    grid.appendChild(row);
   });
 }
 
-function goResults() {
-  try {
-    const d = JSON.parse(localStorage.getItem('lapforge_session'));
-    if (d) {
-      state.laps = d.laps; state.bestLap = d.best;
-      buildResultsScreen();
-      showScreen('results');
-    } else {
-      alert('No saved session found.');
-    }
-  } catch(e) { alert('No saved session found.'); }
+function loadAndShowResults(){
+  try{
+    const d=JSON.parse(localStorage.getItem('lf3_session'));
+    if(!d||!d.laps.length){alert('No saved session.');return}
+    S.laps=d.laps; S.bestLapMs=d.bestMs; S.bestLap=d.best;
+    S.sectorBest=d.sectorBest||[null,null,null];
+    buildResults(); showScreen('results');
+  }catch(e){alert('No saved session.');}
 }
 
-function clearSession() {
-  localStorage.removeItem('lapforge_session');
-  state.laps = []; state.bestLap = null;
+function clearResults(){
+  localStorage.removeItem('lf3_session');
+  S.laps=[]; S.bestLap=null; S.bestLapMs=null; S.sectorBest=[null,null,null];
   showScreen('home');
 }
 
-// ── INIT ──
-window.addEventListener('load', () => {
+// ═══════════════════════════════════════════════
+// NAV & INIT
+// ═══════════════════════════════════════════════
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+window.addEventListener('load',()=>{
   startGPS();
-  if (loadLastLine()) {
-    document.getElementById('btn-quick-start').disabled = false;
+  if(loadState()&&S.line){
+    document.getElementById('btn-quick').disabled=false;
   }
-  // Check for saved session
-  try {
-    const d = JSON.parse(localStorage.getItem('lapforge_session'));
-    if (!d || d.laps.length === 0) { /* nothing */ }
-  } catch(e) {}
+});
+
+window.addEventListener('resize',()=>{
+  if(S.active){initCanvas();drawMap();}
 });
 </script>
 </body>
