@@ -8,6 +8,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>LapForge</title>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@300;400;600;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 <style>
 :root{
   --bg:#0a0a0b;--surface:#111114;--surface2:#18181d;--border:#252530;
@@ -19,7 +20,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(
 .screen{position:absolute;inset:0;display:none;flex-direction:column}
 .screen.active{display:flex}
 
-/* HOME */
+/* ── HOME ── */
 #home{align-items:center;justify-content:center}
 .logo-mark{width:64px;height:64px;margin:0 auto 10px;border:3px solid var(--accent);display:flex;align-items:center;justify-content:center;transform:rotate(45deg)}
 .logo-mark-inner{width:24px;height:24px;background:var(--accent)}
@@ -39,7 +40,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(
 .gdot.bad{background:var(--red)}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
 
-/* SETUP */
+/* ── SETUP ── */
 .hdr{background:var(--surface);border-bottom:1px solid var(--border);padding:14px 16px;display:flex;align-items:center;gap:14px;flex-shrink:0}
 .back-btn{background:none;border:1px solid var(--border);color:var(--muted);font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:600;letter-spacing:1px;padding:5px 10px;cursor:pointer;text-transform:uppercase}
 .hdr-title{font-size:22px;font-weight:700;letter-spacing:2px;color:var(--accent)}
@@ -54,7 +55,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(
 .btn-set{background:var(--accent);color:#000;border:none;font-family:'Barlow Condensed',sans-serif;font-size:19px;font-weight:700;letter-spacing:3px;padding:16px;cursor:pointer;text-transform:uppercase;clip-path:polygon(0 0,calc(100% - 10px) 0,100% 10px,100% 100%,10px 100%,0 calc(100% - 10px));width:100%;transition:opacity .15s}
 .btn-set:disabled{background:var(--border);color:var(--muted);clip-path:none;cursor:default}
 
-/* RACE HUD */
+/* ── RACE HUD ── */
 #race{background:var(--bg)}
 .race-top{display:flex;align-items:center;justify-content:space-between;background:var(--surface);border-bottom:1px solid var(--border);padding:8px 14px;flex-shrink:0}
 .race-top-left{display:flex;align-items:center;gap:10px}
@@ -62,23 +63,19 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(
 .lap-badge{background:var(--accent);color:#000;font-size:14px;font-weight:900;letter-spacing:2px;padding:3px 10px}
 .race-status-txt{font-size:11px;letter-spacing:1px;color:var(--muted)}
 .btn-end{background:var(--red);color:#fff;border:none;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:2px;padding:7px 14px;cursor:pointer;text-transform:uppercase}
-
 .race-main{flex:1;display:flex;overflow:hidden;min-height:0}
 
 /* Left panel */
 .race-panel{width:195px;flex-shrink:0;display:flex;flex-direction:column;border-right:1px solid var(--border);overflow:hidden}
-
 .big-timer{padding:10px 8px 6px;border-bottom:1px solid var(--border);text-align:center;flex-shrink:0}
 .big-timer-label{font-size:9px;letter-spacing:3px;color:var(--muted);text-transform:uppercase;margin-bottom:1px}
 .big-timer-val{font-family:'JetBrains Mono',monospace;font-size:38px;font-weight:700;line-height:1;color:var(--accent);letter-spacing:-1px;transition:color .25s}
 .big-timer-val.crossed{color:var(--green)}
-
 .delta-block{padding:6px 8px;border-bottom:1px solid var(--border);text-align:center;flex-shrink:0}
 .delta-label{font-size:9px;letter-spacing:3px;color:var(--muted);text-transform:uppercase;margin-bottom:1px}
 .delta-val{font-family:'JetBrains Mono',monospace;font-size:26px;font-weight:700;color:var(--muted);line-height:1;transition:color .2s}
 .delta-val.pos{color:var(--red)}
 .delta-val.neg{color:var(--green)}
-
 .metrics{display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid var(--border);flex-shrink:0}
 .metric{padding:7px 5px;text-align:center;border-right:1px solid var(--border)}
 .metric:nth-child(2n){border-right:none}
@@ -88,8 +85,6 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(
 .m-val.green{color:var(--green)}
 .m-val.blue{color:var(--blue)}
 .m-val.orange{color:var(--orange)}
-
-/* Sectors strip */
 .sectors-strip{border-bottom:1px solid var(--border);padding:6px 6px 5px;flex-shrink:0}
 .s-header{font-size:8px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-bottom:5px}
 .sectors-grid{display:flex;gap:3px}
@@ -103,8 +98,6 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(
 .s-time.best{color:var(--green)}
 .s-time.slow{color:var(--red)}
 .sector-learning{font-size:10px;color:var(--orange);letter-spacing:1px;text-align:center;padding:6px;font-style:italic}
-
-/* Lap list */
 .lap-list-hdr{display:grid;grid-template-columns:26px 1fr 54px;padding:4px 6px;background:var(--surface2);flex-shrink:0}
 .lap-list-hdr span{font-size:8px;letter-spacing:2px;color:var(--muted);text-transform:uppercase}
 .lap-scroll{flex:1;overflow-y:auto}
@@ -118,18 +111,36 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(
 .le-delta.pos{color:var(--red)}
 .le-delta.neg{color:var(--green)}
 
-/* Map */
+/* ── MAP ── */
 .map-area{flex:1;position:relative;overflow:hidden;min-width:0}
-#track-canvas{width:100%;height:100%;display:block}
-.car-dot{position:absolute;width:12px;height:12px;border-radius:50%;background:var(--accent);border:2px solid #000;transform:translate(-50%,-50%);pointer-events:none;z-index:10;transition:left .25s linear,top .25s linear}
-.car-heading{position:absolute;width:0;height:0;pointer-events:none;z-index:11;transform-origin:center bottom;transition:left .25s linear,top .25s linear}
-.map-overlay{position:absolute;top:8px;right:8px;display:flex;flex-direction:column;gap:5px;z-index:20}
+#map{width:100%;height:100%}
+
+/* Dark Leaflet tiles overlay */
+#map{filter:brightness(.85) saturate(.7) contrast(1.1)}
+
+/* Leaflet overrides — hide default controls, style popups */
+.leaflet-control-zoom{display:none!important}
+.leaflet-control-attribution{font-size:8px!important;opacity:.4!important;background:rgba(0,0,0,.5)!important;color:#888!important}
+.leaflet-control-attribution a{color:#888!important}
+
+/* Car marker */
+.car-marker-wrap{position:relative;width:24px;height:24px}
+.car-dot-map{width:14px;height:14px;background:var(--accent);border:2px solid #000;border-radius:50%;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%)}
+.car-arrow{width:0;height:0;border-left:5px solid transparent;border-right:5px solid transparent;border-bottom:8px solid var(--accent);position:absolute;top:0;left:50%;transform:translateX(-50%)}
+
+/* Start line popup label */
+.sf-label{background:#e8ff47;color:#000;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:11px;letter-spacing:2px;padding:2px 6px;border:none;border-radius:0;white-space:nowrap}
+.sec-label{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:11px;letter-spacing:2px;padding:2px 6px;white-space:nowrap;border:none;border-radius:0}
+.sec-label-1{background:#47aaff;color:#000}
+.sec-label-2{background:#b47fff;color:#000}
+
+/* Map top-right overlay */
+.map-overlay{position:absolute;top:8px;right:8px;display:flex;flex-direction:column;gap:5px;z-index:1000;pointer-events:none}
 .map-badge{background:rgba(10,10,11,.88);border:1px solid var(--border);padding:4px 9px;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted)}
 .map-badge span{color:var(--text)}
-.sector-badge{position:absolute;background:rgba(10,10,11,.9);border:1px solid var(--blue);padding:3px 7px;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--blue);pointer-events:none;z-index:12;transform:translate(-50%,-140%);white-space:nowrap}
 
 /* Cross flash */
-.cross-flash{position:absolute;inset:0;background:var(--accent);opacity:0;pointer-events:none;z-index:50;transition:opacity .07s}
+.cross-flash{position:absolute;inset:0;background:var(--accent);opacity:0;pointer-events:none;z-index:500;transition:opacity .07s}
 .cross-flash.show{opacity:.16}
 
 /* Bottom strip */
@@ -137,13 +148,13 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(
 .rb-item{display:flex;align-items:center;gap:5px}
 .rb-dot{width:5px;height:5px;border-radius:50%}
 
-/* RESULTS */
+/* ── RESULTS ── */
 .results-body{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:14px}
 .results-hero{text-align:center;padding:20px 0;border-bottom:1px solid var(--border)}
 .rh-label{font-size:10px;letter-spacing:4px;color:var(--muted);text-transform:uppercase;margin-bottom:6px}
 .rh-time{font-family:'JetBrains Mono',monospace;font-size:48px;font-weight:700;color:var(--green)}
 .rh-sub{font-size:13px;color:var(--muted);margin-top:4px;letter-spacing:2px}
-.results-sectors{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:8px}
+.results-sectors{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:12px}
 .res-sec-card{background:var(--surface);border:1px solid var(--border);padding:10px;text-align:center}
 .res-sec-label{font-size:9px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-bottom:4px}
 .res-sec-time{font-family:'JetBrains Mono',monospace;font-size:14px;color:var(--green);font-weight:700}
@@ -169,7 +180,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(
   <div class="logo-block">
     <div class="logo-mark"><div class="logo-mark-inner"></div></div>
     <div class="logo-name">LAPFORGE</div>
-    <div class="logo-sub">GPS LAP TIMER v3</div>
+    <div class="logo-sub">GPS LAP TIMER v4</div>
   </div>
   <div class="home-actions">
     <button class="btn-primary" onclick="showScreen('setup')">NEW SESSION</button>
@@ -201,8 +212,8 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(
     </div>
     <div class="card">
       <div class="info-text">
-        Drive to your <strong>start/finish line</strong> and tap the button below.<br><br>
-        Sectors are <em>automatic</em> — LapForge records your first lap, then splits it into 3 equal sectors by distance. No input needed while driving.
+        Drive to your <strong>start/finish line</strong> and tap below.<br><br>
+        <em>Sectors are fully automatic</em> — computed from your first lap. Real map powered by OpenStreetMap.
       </div>
     </div>
     <button class="btn-set" id="btn-set-line" disabled onclick="setLineAndStart()">DROP START LINE &amp; GO</button>
@@ -227,7 +238,6 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(
   </div>
 
   <div class="race-main">
-    <!-- Left panel -->
     <div class="race-panel">
       <div class="big-timer">
         <div class="big-timer-label">Lap Time</div>
@@ -243,9 +253,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(
         <div class="metric"><div class="m-label">km/h</div><div class="m-val blue" id="rt-speed">0</div></div>
         <div class="metric"><div class="m-label">Laps</div><div class="m-val orange" id="rt-laps">0</div></div>
       </div>
-
-      <!-- Sectors -->
-      <div class="sectors-strip" id="sectors-strip">
+      <div class="sectors-strip">
         <div class="s-header">Sectors</div>
         <div id="sectors-learning" class="sector-learning">Learning on lap 1…</div>
         <div class="sectors-grid" id="sectors-grid" style="display:none">
@@ -254,17 +262,13 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(
           <div class="s-cell" id="sc-2"><div class="s-num">S3</div><div class="s-time" id="st-2">—</div></div>
         </div>
       </div>
-
-      <div class="lap-list-hdr">
-        <span>#</span><span>Time</span><span>Delta</span>
-      </div>
+      <div class="lap-list-hdr"><span>#</span><span>Time</span><span>Delta</span></div>
       <div class="lap-scroll" id="lap-scroll"></div>
     </div>
 
-    <!-- Map -->
+    <!-- Real map -->
     <div class="map-area" id="map-area">
-      <canvas id="track-canvas"></canvas>
-      <div class="car-dot" id="car-dot" style="display:none"></div>
+      <div id="map"></div>
       <div class="map-overlay">
         <div class="map-badge" id="mb-acc">Acc <span>—</span></div>
         <div class="map-badge" id="mb-spd">0 <span>km/h</span></div>
@@ -300,78 +304,64 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(
   </div>
 </div>
 
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
 // ═══════════════════════════════════════════════
 // STATE
 // ═══════════════════════════════════════════════
 const S = {
-  pos: null, prevPos: null,
-  // Start/finish line
-  line: null, lineP1: null, lineP2: null,
-  // Session
-  active: false,
-  lapStart: null,
-  lapNum: 1,
-  laps: [],
-  bestLapMs: null, bestLap: null,
-  hasCrossed: false,
-  timerInt: null,
-  watchId: null,
-  // Track geometry
-  trackPoints: [],   // all GPS points ever in session
-  lap1Points: [],    // GPS points from lap 1 only (used to compute sectors)
-  mapBounds: null,
-  // Automatic sectors — null until computed after lap 1
-  autoSectors: null,         // [{centre,p1,p2,distFromStart}] length 2 (the two split points)
-  sectorTimes: [null,null,null],
-  sectorBest:  [null,null,null],
-  currentSector: 0,          // 0,1,2 — which sector car is currently in
-  lap1Complete: false,
+  pos:null, prevPos:null,
+  line:null, lineP1:null, lineP2:null,
+  active:false, lapStart:null, lapNum:1,
+  laps:[], bestLapMs:null, bestLap:null,
+  hasCrossed:false, timerInt:null, watchId:null,
+  trackPoints:[], lap1Points:[],
+  autoSectors:null,
+  sectorTimes:[null,null,null], sectorBest:[null,null,null],
+  currentSector:0, lap1Complete:false,
+  // Leaflet objects
+  map:null,
+  carMarker:null,
+  trackLine:null,       // full session polyline (dark)
+  lapLine:null,         // current lap polyline (bright)
+  sfLine:null,          // start/finish line
+  secLines:[null,null], // sector split lines
+  lapPoints:[],         // GPS points for current lap only
 };
 
 // ═══════════════════════════════════════════════
 // UTILS
 // ═══════════════════════════════════════════════
-const Rearth = 6371000;
-const toRad = d => d * Math.PI / 180;
-const toDeg = r => r * 180 / Math.PI;
+const Rearth=6371000;
+const toRad=d=>d*Math.PI/180;
+const toDeg=r=>r*180/Math.PI;
 
-function fmtTime(ms) {
-  if (ms == null) return '—';
-  const neg = ms < 0; ms = Math.abs(ms);
-  const m = Math.floor(ms/60000);
-  const s = Math.floor((ms%60000)/1000);
-  const ms3 = Math.floor(ms%1000);
-  return (neg?'-':'')+`${m}:${String(s).padStart(2,'0')}.${String(ms3).padStart(3,'0')}`;
+function fmtTime(ms){
+  if(ms==null)return'—';
+  const neg=ms<0;ms=Math.abs(ms);
+  const m=Math.floor(ms/60000),s=Math.floor((ms%60000)/1000),ms3=Math.floor(ms%1000);
+  return(neg?'-':'')+`${m}:${String(s).padStart(2,'0')}.${String(ms3).padStart(3,'0')}`;
 }
-
-function fmtDelta(ms) {
-  if (ms == null) return '—';
-  return (ms >= 0 ? '+' : '') + fmtTime(ms);
+function fmtDelta(ms){
+  if(ms==null)return'—';
+  return(ms>=0?'+':'')+fmtTime(ms);
 }
-
-// Haversine distance in metres
-function distM(a, b) {
+function distM(a,b){
   const φ1=toRad(a.lat),φ2=toRad(b.lat),Δφ=toRad(b.lat-a.lat),Δλ=toRad(b.lon-a.lon);
   const x=Math.sin(Δφ/2)**2+Math.cos(φ1)*Math.cos(φ2)*Math.sin(Δλ/2)**2;
   return Rearth*2*Math.atan2(Math.sqrt(x),Math.sqrt(1-x));
 }
-
-function destPoint(lat, lon, brg, dist) {
+function destPoint(lat,lon,brg,dist){
   const δ=dist/Rearth,θ=toRad(brg),φ1=toRad(lat),λ1=toRad(lon);
   const φ2=Math.asin(Math.sin(φ1)*Math.cos(δ)+Math.cos(φ1)*Math.sin(δ)*Math.cos(θ));
   const λ2=λ1+Math.atan2(Math.sin(θ)*Math.sin(δ)*Math.cos(φ1),Math.cos(δ)-Math.sin(φ1)*Math.sin(φ2));
-  return {lat:toDeg(φ2),lon:toDeg(λ2)};
+  return{lat:toDeg(φ2),lon:toDeg(λ2)};
 }
-
-function bearingBetween(a, b) {
+function bearingBetween(a,b){
   const φ1=toRad(a.lat),φ2=toRad(b.lat),Δλ=toRad(b.lon-a.lon);
-  const y=Math.sin(Δλ)*Math.cos(φ2);
-  const x=Math.cos(φ1)*Math.sin(φ2)-Math.sin(φ1)*Math.cos(φ2)*Math.cos(Δλ);
-  return (toDeg(Math.atan2(y,x))+360)%360;
+  const y=Math.sin(Δλ)*Math.cos(φ2),x=Math.cos(φ1)*Math.sin(φ2)-Math.sin(φ1)*Math.cos(φ2)*Math.cos(Δλ);
+  return(toDeg(Math.atan2(y,x))+360)%360;
 }
-
-// Flat-projection segment intersection
 function crosses(a1,a2,b1,b2){
   const toXY=c=>({x:c.lon*Math.cos(toRad(c.lat)),y:c.lat});
   function cross2(o,a,b){return(a.x-o.x)*(b.y-o.y)-(a.y-o.y)*(b.x-o.x)}
@@ -385,130 +375,213 @@ function crosses(a1,a2,b1,b2){
   if(d4===0&&onSeg(B2,A1,A2))return true;
   return false;
 }
-
-function makeLine(lat, lon, hdg) {
+function makeLine(lat,lon,hdg){
   const perp=(hdg+90)%360;
-  return {
-    centre:{lat,lon},
-    p1:destPoint(lat,lon,perp,25),
-    p2:destPoint(lat,lon,(perp+180)%360,25)
-  };
+  return{centre:{lat,lon},p1:destPoint(lat,lon,perp,25),p2:destPoint(lat,lon,(perp+180)%360,25)};
+}
+
+// ═══════════════════════════════════════════════
+// LEAFLET MAP
+// ═══════════════════════════════════════════════
+function initMap(lat, lon) {
+  if (S.map) { S.map.remove(); S.map=null; }
+
+  S.map = L.map('map', {
+    center: [lat, lon],
+    zoom: 17,
+    zoomControl: false,
+    attributionControl: true,
+    dragging: false,      // locked — follows car automatically
+    scrollWheelZoom: false,
+    doubleClickZoom: false,
+    touchZoom: false,
+  });
+
+  // Dark OpenStreetMap tiles via CartoDB dark matter
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+    attribution: '© OpenStreetMap © CARTO',
+    subdomains: 'abcd',
+    maxZoom: 20,
+  }).addTo(S.map);
+
+  // Car marker using a custom div icon
+  const carIcon = L.divIcon({
+    className: '',
+    html: `<div class="car-marker-wrap"><div class="car-arrow"></div><div class="car-dot-map"></div></div>`,
+    iconSize: [24, 24],
+    iconAnchor: [12, 12],
+  });
+  S.carMarker = L.marker([lat, lon], {icon: carIcon, zIndexOffset: 1000}).addTo(S.map);
+
+  // Track polyline — full session path (dim)
+  S.trackLine = L.polyline([], {
+    color: '#3a3a5a', weight: 6, opacity: 0.8,
+    lineJoin: 'round', lineCap: 'round'
+  }).addTo(S.map);
+
+  // Current lap polyline (bright yellow)
+  S.lapLine = L.polyline([], {
+    color: '#e8ff47', weight: 3, opacity: 0.9,
+    lineJoin: 'round', lineCap: 'round'
+  }).addTo(S.map);
+
+  S.lapPoints = [];
+  S.sfLine = null;
+  S.secLines = [null, null];
+}
+
+function drawStartLine() {
+  if (!S.map || !S.lineP1 || !S.lineP2) return;
+  if (S.sfLine) { S.sfLine.remove(); }
+
+  S.sfLine = L.polyline(
+    [[S.lineP1.lat, S.lineP1.lon], [S.lineP2.lat, S.lineP2.lon]],
+    {color:'#e8ff47', weight:3, opacity:1, dashArray:'8 5'}
+  ).addTo(S.map);
+
+  // S/F label tooltip
+  const mid = L.latLng(S.line.lat, S.line.lon);
+  L.marker(mid, {
+    icon: L.divIcon({
+      className:'', html:'<div class="sf-label">S/F</div>',
+      iconAnchor:[14,20]
+    }),
+    zIndexOffset:500, interactive:false
+  }).addTo(S.map);
+}
+
+function drawSectorLines() {
+  if (!S.map || !S.autoSectors) return;
+  const colors  = ['#47aaff','#b47fff'];
+  const classes = ['sec-label-1','sec-label-2'];
+  const labels  = ['S1/S2','S2/S3'];
+
+  S.autoSectors.forEach((sec, i) => {
+    if (S.secLines[i]) S.secLines[i].remove();
+    S.secLines[i] = L.polyline(
+      [[sec.p1.lat, sec.p1.lon],[sec.p2.lat, sec.p2.lon]],
+      {color:colors[i], weight:2.5, opacity:1, dashArray:'6 4'}
+    ).addTo(S.map);
+
+    L.marker([sec.centre.lat, sec.centre.lon], {
+      icon: L.divIcon({
+        className:'',
+        html:`<div class="sec-label ${classes[i]}">${labels[i]}</div>`,
+        iconAnchor:[18,20]
+      }),
+      zIndexOffset:400, interactive:false
+    }).addTo(S.map);
+  });
+}
+
+function updateMapCar(lat, lon, heading) {
+  if (!S.map) return;
+
+  // Move car marker
+  S.carMarker.setLatLng([lat, lon]);
+
+  // Rotate arrow inside the marker
+  const el = S.carMarker.getElement();
+  if (el && heading != null && !isNaN(heading)) {
+    const wrap = el.querySelector('.car-marker-wrap');
+    if (wrap) wrap.style.transform = `rotate(${heading}deg)`;
+  }
+
+  // Keep map centred on car, smooth pan
+  S.map.panTo([lat, lon], {animate:true, duration:0.5, easeLinearity:1});
+
+  // Add to track lines
+  S.trackLine.addLatLng([lat, lon]);
+  S.lapPoints.push([lat, lon]);
+  S.lapLine.setLatLngs(S.lapPoints);
+}
+
+function resetLapLine() {
+  S.lapPoints = [];
+  S.lapLine.setLatLngs([]);
 }
 
 // ═══════════════════════════════════════════════
 // AUTO SECTOR COMPUTATION
-// Called after lap 1 completes with the recorded GPS points
 // ═══════════════════════════════════════════════
 function computeAutoSectors(points) {
   if (points.length < 6) return null;
-
-  // Build cumulative distance array along the path
-  const cumDist = [0];
-  for (let i = 1; i < points.length; i++) {
-    cumDist.push(cumDist[i-1] + distM(points[i-1], points[i]));
-  }
-  const totalDist = cumDist[cumDist.length - 1];
-  if (totalDist < 50) return null; // too short
-
-  // Find the point index closest to 33% and 66% of total distance
-  const targets = [totalDist / 3, (totalDist * 2) / 3];
-  const sectors = targets.map(target => {
-    let bestIdx = 0, bestDiff = Infinity;
-    for (let i = 0; i < cumDist.length; i++) {
-      const diff = Math.abs(cumDist[i] - target);
-      if (diff < bestDiff) { bestDiff = diff; bestIdx = i; }
-    }
-    const pt = points[bestIdx];
-    // Bearing at that point (average of approach + departure)
-    const prev = points[Math.max(0, bestIdx-1)];
-    const next = points[Math.min(points.length-1, bestIdx+1)];
-    const brg = bearingBetween(prev, next);
-    const perp = (brg + 90) % 360;
-    return {
-      centre: {lat:pt.lat, lon:pt.lon},
-      p1: destPoint(pt.lat, pt.lon, perp, 25),
-      p2: destPoint(pt.lat, pt.lon, (perp+180)%360, 25),
-      distFromStart: cumDist[bestIdx]
-    };
+  const cumDist=[0];
+  for(let i=1;i<points.length;i++) cumDist.push(cumDist[i-1]+distM(points[i-1],points[i]));
+  const totalDist=cumDist[cumDist.length-1];
+  if(totalDist<50) return null;
+  const targets=[totalDist/3,(totalDist*2)/3];
+  return targets.map(target=>{
+    let bestIdx=0,bestDiff=Infinity;
+    for(let i=0;i<cumDist.length;i++){const d=Math.abs(cumDist[i]-target);if(d<bestDiff){bestDiff=d;bestIdx=i;}}
+    const pt=points[bestIdx];
+    const prev=points[Math.max(0,bestIdx-1)],next=points[Math.min(points.length-1,bestIdx+1)];
+    const brg=bearingBetween(prev,next),perp=(brg+90)%360;
+    return{centre:{lat:pt.lat,lon:pt.lon},p1:destPoint(pt.lat,pt.lon,perp,25),p2:destPoint(pt.lat,pt.lon,(perp+180)%360,25),distFromStart:cumDist[bestIdx]};
   });
-
-  return sectors; // array of 2 split points → defines 3 sectors
 }
 
 function activateSectors(sectors) {
-  S.autoSectors = sectors;
-  S.sectorTimes = [null,null,null];
-  S.currentSector = 0;
-
-  // Show sector grid, hide learning msg
-  document.getElementById('sectors-learning').style.display = 'none';
-  document.getElementById('sectors-grid').style.display = 'flex';
-  document.getElementById('rb-sec').textContent = 'Sectors: 3 active';
-  document.getElementById('rb-sec-dot').style.background = 'var(--green)';
-
-  // Save sectors with line
+  S.autoSectors=sectors;
+  S.sectorTimes=[null,null,null];
+  S.currentSector=0;
+  document.getElementById('sectors-learning').style.display='none';
+  document.getElementById('sectors-grid').style.display='flex';
+  document.getElementById('rb-sec').textContent='Sectors: 3 active';
+  document.getElementById('rb-sec-dot').style.background='var(--green)';
   saveState();
-  drawMap(); // redraw to show sector lines
+  drawSectorLines();
 }
 
 // ═══════════════════════════════════════════════
 // GPS
 // ═══════════════════════════════════════════════
 function startGPS() {
-  if (!navigator.geolocation) { setGPSUI('bad','No GPS'); return; }
-  S.watchId = navigator.geolocation.watchPosition(onPos, onPosErr,
-    {enableHighAccuracy:true, maximumAge:500, timeout:10000});
+  if(!navigator.geolocation){setGPSUI('bad','No GPS');return}
+  S.watchId=navigator.geolocation.watchPosition(onPos,onPosErr,
+    {enableHighAccuracy:true,maximumAge:500,timeout:10000});
 }
 
 function onPos(raw) {
-  const p = {
-    lat: raw.coords.latitude,
-    lon: raw.coords.longitude,
-    speed: raw.coords.speed != null ? raw.coords.speed * 3.6 : null,
-    heading: raw.coords.heading,
-    accuracy: raw.coords.accuracy,
-    ts: raw.timestamp
+  const p={
+    lat:raw.coords.latitude, lon:raw.coords.longitude,
+    speed:raw.coords.speed!=null?raw.coords.speed*3.6:null,
+    heading:raw.coords.heading, accuracy:raw.coords.accuracy, ts:raw.timestamp
   };
-  S.prevPos = S.pos;
-  S.pos = p;
-
-  const acc = Math.round(p.accuracy);
-  const q = acc<10?'good':acc<30?'ok':'bad';
+  S.prevPos=S.pos; S.pos=p;
+  const acc=Math.round(p.accuracy);
+  const q=acc<10?'good':acc<30?'ok':'bad';
   setGPSUI(q,`GPS ±${acc}m`);
 
-  // Setup screen live updates
   const ce=document.getElementById('su-coords');
   if(ce){ce.textContent=`${p.lat.toFixed(6)}, ${p.lon.toFixed(6)}`;ce.classList.remove('dim')}
   const ae=document.getElementById('su-acc');
   if(ae){ae.textContent=`±${acc}m`;ae.className='card-value'+(acc<20?'':' dim')}
   const btn=document.getElementById('btn-set-line');
-  if(btn) btn.disabled = acc>50;
+  if(btn) btn.disabled=acc>50;
 
-  if (!S.active) return;
+  if(!S.active) return;
 
-  // Update HUD displays
-  const spd = p.speed!=null ? Math.round(p.speed) : 0;
-  document.getElementById('rt-speed').textContent = spd;
-  document.getElementById('mb-spd').innerHTML = `${spd} <span>km/h</span>`;
-  document.getElementById('mb-acc').innerHTML = `Acc <span>±${acc}m</span>`;
-  document.getElementById('rb-coords').textContent = `${p.lat.toFixed(4)}, ${p.lon.toFixed(4)}`;
+  const spd=p.speed!=null?Math.round(p.speed):0;
+  document.getElementById('rt-speed').textContent=spd;
+  document.getElementById('mb-spd').innerHTML=`${spd} <span>km/h</span>`;
+  document.getElementById('mb-acc').innerHTML=`Acc <span>±${acc}m</span>`;
+  document.getElementById('rb-coords').textContent=`${p.lat.toFixed(4)}, ${p.lon.toFixed(4)}`;
 
-  // Track & map
-  S.trackPoints.push({lat:p.lat, lon:p.lon});
-  if (!S.lap1Complete) S.lap1Points.push({lat:p.lat, lon:p.lon});
-  updateMapBounds(p.lat, p.lon);
-  drawMap();
-  updateCarDot(p.lat, p.lon);
+  S.trackPoints.push({lat:p.lat,lon:p.lon});
+  if(!S.lap1Complete) S.lap1Points.push({lat:p.lat,lon:p.lon});
 
-  if (S.prevPos) {
-    checkLineCrossing(S.prevPos, p);
-    if (S.autoSectors) checkSectorCrossings(S.prevPos, p);
+  updateMapCar(p.lat, p.lon, p.heading);
+
+  if(S.prevPos){
+    checkLineCrossing(S.prevPos,p);
+    if(S.autoSectors) checkSectorCrossings(S.prevPos,p);
   }
 }
 
-function onPosErr() { setGPSUI('bad','GPS error'); }
+function onPosErr(){setGPSUI('bad','GPS error')}
 
-function setGPSUI(q, label) {
+function setGPSUI(q,label){
   ['h','su'].forEach(id=>{
     const d=document.getElementById(id+'-dot');
     const t=document.getElementById(id+'-gps');
@@ -524,161 +597,116 @@ function setGPSUI(q, label) {
 // ═══════════════════════════════════════════════
 // LINE CROSSING
 // ═══════════════════════════════════════════════
-function checkLineCrossing(prev, cur) {
-  if (!S.lineP1 || !S.lineP2) return;
-  if (!crosses(prev, cur, S.lineP1, S.lineP2)) return;
-
-  const now = Date.now();
-
-  if (!S.hasCrossed) {
-    // First crossing — start timer, start recording lap 1
-    S.hasCrossed = true;
-    S.lapStart = now;
-    S.currentSector = 0;
-    S.sectorTimes = [null,null,null];
-    S.lap1Points = [{lat:cur.lat, lon:cur.lon}]; // start fresh for sector learning
-    document.getElementById('race-status').textContent = 'Lap 1 · Learning…';
-    flash();
-    return;
+function checkLineCrossing(prev,cur){
+  if(!S.lineP1||!S.lineP2) return;
+  if(!crosses(prev,cur,S.lineP1,S.lineP2)) return;
+  const now=Date.now();
+  if(!S.hasCrossed){
+    S.hasCrossed=true; S.lapStart=now; S.currentSector=0;
+    S.sectorTimes=[null,null,null];
+    S.lap1Points=[{lat:cur.lat,lon:cur.lon}];
+    resetLapLine();
+    document.getElementById('race-status').textContent='Lap 1 · Learning…';
+    flash(); return;
   }
-
-  const elapsed = now - S.lapStart;
-  if (elapsed < 5000) return; // debounce
-
-  // Complete current sector time (sector 3 ends at finish)
-  if (S.autoSectors) {
-    const sec2end = elapsed;
-    S.sectorTimes[2] = elapsed - (S.sectorTimes[0]||0) - (S.sectorTimes[1]||0);
-    updateBestSector(2, S.sectorTimes[2]);
-    updateSectorDisplay(2, S.sectorTimes[2], 2);
+  const elapsed=now-S.lapStart;
+  if(elapsed<5000) return;
+  if(S.autoSectors){
+    S.sectorTimes[2]=elapsed-(S.sectorTimes[0]||0)-(S.sectorTimes[1]||0);
+    updateBestSector(2,S.sectorTimes[2]);
+    updateSectorDisplay(2,S.sectorTimes[2]);
   }
-
-  recordLap(elapsed, cur.speed);
-
-  // After lap 1, compute sectors from the recorded path
-  if (!S.lap1Complete && S.laps.length === 1) {
-    S.lap1Complete = true;
-    const computed = computeAutoSectors(S.lap1Points);
-    if (computed) {
-      activateSectors(computed);
-    } else {
-      document.getElementById('sectors-learning').textContent = 'Not enough GPS data for sectors';
-    }
+  recordLap(elapsed,cur.speed);
+  if(!S.lap1Complete&&S.laps.length===1){
+    S.lap1Complete=true;
+    const computed=computeAutoSectors(S.lap1Points);
+    if(computed) activateSectors(computed);
+    else document.getElementById('sectors-learning').textContent='Not enough GPS data';
   }
 }
 
 // ═══════════════════════════════════════════════
 // SECTOR CROSSINGS
 // ═══════════════════════════════════════════════
-function checkSectorCrossings(prev, cur) {
-  if (!S.hasCrossed || !S.autoSectors) return;
-  const now = Date.now();
-
-  // S.autoSectors has 2 split points → sectors 0→1 and 1→2
-  S.autoSectors.forEach((split, i) => {
-    // Only allow crossing in order: must be in sector i to cross into i+1
-    if (S.currentSector !== i) return;
-    if (!crosses(prev, cur, split.p1, split.p2)) return;
-
-    const elapsed = now - S.lapStart;
-    // Debounce: must be at least 3s after lap start or last sector
-    if (elapsed < 3000) return;
-
-    // Record time for sector i
-    const prevSectorTotal = i === 0 ? 0 : (S.sectorTimes.slice(0,i).reduce((a,b)=>(a||0)+(b||0),0));
-    const secTime = elapsed - prevSectorTotal;
-    S.sectorTimes[i] = secTime;
-    S.currentSector = i + 1;
-
-    updateBestSector(i, secTime);
-    updateSectorDisplay(i, secTime, i);
+function checkSectorCrossings(prev,cur){
+  if(!S.hasCrossed||!S.autoSectors) return;
+  const now=Date.now();
+  S.autoSectors.forEach((split,i)=>{
+    if(S.currentSector!==i) return;
+    if(!crosses(prev,cur,split.p1,split.p2)) return;
+    const elapsed=now-S.lapStart;
+    if(elapsed<3000) return;
+    const prevTotal=i===0?0:S.sectorTimes.slice(0,i).reduce((a,b)=>(a||0)+(b||0),0);
+    const secTime=elapsed-prevTotal;
+    S.sectorTimes[i]=secTime; S.currentSector=i+1;
+    updateBestSector(i,secTime);
+    updateSectorDisplay(i,secTime);
   });
 }
 
-function updateBestSector(idx, ms) {
-  if (S.sectorBest[idx] == null || ms < S.sectorBest[idx]) {
-    S.sectorBest[idx] = ms;
-  }
+function updateBestSector(idx,ms){
+  if(S.sectorBest[idx]==null||ms<S.sectorBest[idx]) S.sectorBest[idx]=ms;
 }
-
-function updateSectorDisplay(idx, ms, sector) {
-  const el = document.getElementById(`st-${idx}`);
-  const cell = document.getElementById(`sc-${idx}`);
-  if (!el || !cell) return;
-  el.textContent = fmtTime(ms);
-  const isBest = S.sectorBest[idx] === ms;
-  cell.className = 's-cell ' + (isBest ? 's-best' : 's-slow');
-  el.className = 's-time ' + (isBest ? 'best' : 'slow');
+function updateSectorDisplay(idx,ms){
+  const el=document.getElementById(`st-${idx}`);
+  const cell=document.getElementById(`sc-${idx}`);
+  if(!el||!cell) return;
+  el.textContent=fmtTime(ms);
+  const isBest=S.sectorBest[idx]===ms;
+  cell.className='s-cell '+(isBest?'s-best':'s-slow');
+  el.className='s-time '+(isBest?'best':'slow');
 }
-
-function resetSectorDisplaysForNewLap() {
-  [0,1,2].forEach(i => {
-    const el = document.getElementById(`st-${i}`);
-    const cell = document.getElementById(`sc-${i}`);
-    if (el) { el.textContent = '—'; el.className = 's-time live'; }
-    if (cell) cell.className = 's-cell s-active';
+function resetSectorDisplays(){
+  [0,1,2].forEach(i=>{
+    const el=document.getElementById(`st-${i}`);
+    const cell=document.getElementById(`sc-${i}`);
+    if(el){el.textContent='—';el.className='s-time live'}
+    if(cell) cell.className='s-cell s-active';
   });
-  // Highlight current sector
-  const c0 = document.getElementById('sc-0');
-  if (c0) c0.className = 's-cell s-active';
 }
 
 // ═══════════════════════════════════════════════
 // LAP RECORDING
 // ═══════════════════════════════════════════════
-function recordLap(ms, speed) {
-  const lapTime = fmtTime(ms);
-  const spd = speed != null ? Math.round(speed) : null;
-  const delta = S.bestLapMs != null ? ms - S.bestLapMs : null;
-
-  if (S.bestLapMs == null || ms < S.bestLapMs) {
-    S.bestLapMs = ms;
-    S.bestLap = lapTime;
-    document.getElementById('rt-best').textContent = lapTime;
+function recordLap(ms,speed){
+  const lapTime=fmtTime(ms);
+  const spd=speed!=null?Math.round(speed):null;
+  const delta=S.bestLapMs!=null?ms-S.bestLapMs:null;
+  if(S.bestLapMs==null||ms<S.bestLapMs){
+    S.bestLapMs=ms; S.bestLap=lapTime;
+    document.getElementById('rt-best').textContent=lapTime;
   }
-
-  const lap = {num:S.lapNum, ms, time:lapTime, speed:spd, delta, sectors:[...S.sectorTimes]};
-  S.laps.push(lap);
-
-  document.getElementById('rt-last').textContent = lapTime;
-  document.getElementById('rt-laps').textContent = S.laps.length;
-  renderLapRow(lap);
+  S.laps.push({num:S.lapNum,ms,time:lapTime,speed:spd,delta,sectors:[...S.sectorTimes]});
+  document.getElementById('rt-last').textContent=lapTime;
+  document.getElementById('rt-laps').textContent=S.laps.length;
+  renderLapRows();
   flash();
-
-  // Reset for next lap
-  S.lapStart = Date.now();
-  S.lapNum++;
-  S.currentSector = 0;
-  S.sectorTimes = [null,null,null];
-  resetSectorDisplaysForNewLap();
-
-  document.getElementById('lap-badge').textContent = `LAP ${S.lapNum}`;
-  document.getElementById('race-status').textContent = S.lap1Complete ? 'Timing…' : 'Lap 1 · Learning…';
-  document.getElementById('rt-delta').textContent = '—';
-  document.getElementById('rt-delta').className = 'delta-val';
+  S.lapStart=Date.now(); S.lapNum++;
+  S.currentSector=0; S.sectorTimes=[null,null,null];
+  resetSectorDisplays();
+  resetLapLine();
+  document.getElementById('lap-badge').textContent=`LAP ${S.lapNum}`;
+  document.getElementById('race-status').textContent=S.lap1Complete?'Timing…':'Lap 1 · Learning…';
+  document.getElementById('rt-delta').textContent='—';
+  document.getElementById('rt-delta').className='delta-val';
   saveLaps();
 }
 
-function renderLapRow(lap) {
-  const dStr = fmtDelta(lap.delta);
-  const dCls = lap.delta==null?'':(lap.delta>0?'pos':'neg');
-  const scroll = document.getElementById('lap-scroll');
-  // Rebuild all rows to keep best highlight correct
-  scroll.innerHTML = '';
-  [...S.laps].reverse().forEach(l => {
-    const isBest = S.bestLapMs === l.ms;
-    const ds = fmtDelta(l.delta);
-    const dc = l.delta==null?'':(l.delta>0?'pos':'neg');
-    const row = document.createElement('div');
-    row.className = 'lap-entry'+(isBest?' best':'');
-    row.innerHTML = `<span class="le-num">${l.num}</span><span class="le-time">${l.time}</span><span class="le-delta ${dc}">${ds}</span>`;
+function renderLapRows(){
+  const scroll=document.getElementById('lap-scroll');
+  scroll.innerHTML='';
+  [...S.laps].reverse().forEach(l=>{
+    const isBest=S.bestLapMs===l.ms;
+    const ds=fmtDelta(l.delta),dc=l.delta==null?'':(l.delta>0?'pos':'neg');
+    const row=document.createElement('div');
+    row.className='lap-entry'+(isBest?' best':'');
+    row.innerHTML=`<span class="le-num">${l.num}</span><span class="le-time">${l.time}</span><span class="le-delta ${dc}">${ds}</span>`;
     scroll.appendChild(row);
   });
 }
 
-function flash() {
-  const cf=document.getElementById('cf');
-  const t=document.getElementById('rt-timer');
+function flash(){
+  const cf=document.getElementById('cf'),t=document.getElementById('rt-timer');
   cf.classList.add('show');t.classList.add('crossed');
   setTimeout(()=>{cf.classList.remove('show');t.classList.remove('crossed')},320);
 }
@@ -686,35 +714,34 @@ function flash() {
 // ═══════════════════════════════════════════════
 // SESSION CONTROL
 // ═══════════════════════════════════════════════
-function setLineAndStart() {
-  if (!S.pos) return;
-  const hdg = (S.pos.heading!=null&&!isNaN(S.pos.heading)) ? S.pos.heading : 0;
-  const l = makeLine(S.pos.lat, S.pos.lon, hdg);
+function setLineAndStart(){
+  if(!S.pos) return;
+  const hdg=(S.pos.heading!=null&&!isNaN(S.pos.heading))?S.pos.heading:0;
+  const l=makeLine(S.pos.lat,S.pos.lon,hdg);
   S.line=l.centre; S.lineP1=l.p1; S.lineP2=l.p2;
-  S.autoSectors = null; // will be computed after lap 1
+  S.autoSectors=null;
   saveState();
   startSession();
 }
 
-function quickStart() {
+function quickStart(){
   loadState();
-  if (S.line) startSession();
+  if(S.line) startSession();
 }
 
-function startSession() {
+function startSession(){
   S.active=true; S.hasCrossed=false; S.lapStart=null;
   S.lapNum=1; S.laps=[]; S.bestLapMs=null; S.bestLap=null;
-  S.trackPoints=[]; S.lap1Points=[]; S.mapBounds=null;
+  S.trackPoints=[]; S.lap1Points=[]; S.lapPoints=[];
   S.sectorTimes=[null,null,null]; S.sectorBest=[null,null,null];
   S.currentSector=0; S.lap1Complete=false;
 
-  // Reset if quick-starting with saved sectors
-  if (S.autoSectors) {
+  if(S.autoSectors){
     document.getElementById('sectors-learning').style.display='none';
     document.getElementById('sectors-grid').style.display='flex';
     document.getElementById('rb-sec').textContent='Sectors: 3 active';
     document.getElementById('rb-sec-dot').style.background='var(--green)';
-    S.lap1Complete = true; // skip learning
+    S.lap1Complete=true;
   } else {
     document.getElementById('sectors-learning').style.display='block';
     document.getElementById('sectors-learning').textContent='Learning on lap 1…';
@@ -732,37 +759,43 @@ function startSession() {
   document.getElementById('rt-delta').className='delta-val';
   document.getElementById('lap-badge').textContent='LAP 1';
   document.getElementById('race-status').textContent='Cross line to start';
-  document.getElementById('rb-line')||(()=>{})();
-
-  initCanvas();
-  if('wakeLock' in navigator) navigator.wakeLock.request('screen').catch(()=>{});
-
-  S.timerInt = setInterval(()=>{
-    if (!S.hasCrossed||!S.lapStart) return;
-    const elapsed = Date.now()-S.lapStart;
-    document.getElementById('rt-timer').textContent = fmtTime(elapsed);
-    // Live delta
-    if (S.bestLapMs!=null) {
-      const d = elapsed-S.bestLapMs;
-      const el = document.getElementById('rt-delta');
-      el.textContent = fmtDelta(d);
-      el.className = 'delta-val '+(d>0?'pos':'neg');
-    }
-    // Highlight active sector cell
-    if (S.autoSectors) {
-      [0,1,2].forEach(i=>{
-        const cell=document.getElementById(`sc-${i}`);
-        if(!cell) return;
-        const isCurrent = S.currentSector===i && S.sectorTimes[i]==null;
-        if(isCurrent) cell.classList.add('s-active');
-      });
-    }
-  },50);
 
   showScreen('race');
+
+  // Init map after screen is visible (Leaflet needs dimensions)
+  requestAnimationFrame(()=>{
+    const lat=S.pos?S.pos.lat:47.4979;
+    const lon=S.pos?S.pos.lon:19.0402;
+    initMap(lat,lon);
+    drawStartLine();
+    if(S.autoSectors) drawSectorLines();
+
+    if('wakeLock' in navigator) navigator.wakeLock.request('screen').catch(()=>{});
+
+    S.timerInt=setInterval(()=>{
+      if(!S.hasCrossed||!S.lapStart) return;
+      const elapsed=Date.now()-S.lapStart;
+      document.getElementById('rt-timer').textContent=fmtTime(elapsed);
+      if(S.bestLapMs!=null){
+        const d=elapsed-S.bestLapMs;
+        const el=document.getElementById('rt-delta');
+        el.textContent=fmtDelta(d);
+        el.className='delta-val '+(d>0?'pos':'neg');
+      }
+      if(S.autoSectors){
+        [0,1,2].forEach(i=>{
+          const cell=document.getElementById(`sc-${i}`);
+          if(!cell) return;
+          const isCur=S.currentSector===i&&S.sectorTimes[i]==null;
+          if(isCur&&!cell.classList.contains('s-best')&&!cell.classList.contains('s-slow'))
+            cell.className='s-cell s-active';
+        });
+      }
+    },50);
+  });
 }
 
-function endSession() {
+function endSession(){
   S.active=false;
   clearInterval(S.timerInt);
   saveLaps();
@@ -771,160 +804,23 @@ function endSession() {
 }
 
 // ═══════════════════════════════════════════════
-// CANVAS MAP
-// ═══════════════════════════════════════════════
-function initCanvas() {
-  const area=document.getElementById('map-area');
-  const canvas=document.getElementById('track-canvas');
-  canvas.width=area.clientWidth; canvas.height=area.clientHeight;
-  const ctx=canvas.getContext('2d');
-  ctx.fillStyle='#0a0a0b'; ctx.fillRect(0,0,canvas.width,canvas.height);
-  ctx.font='13px "Barlow Condensed",sans-serif';
-  ctx.fillStyle='#55555f'; ctx.textAlign='center';
-  ctx.fillText('Drive to build the track map',canvas.width/2,canvas.height/2);
-  document.getElementById('car-dot').style.display='none';
-}
-
-function updateMapBounds(lat,lon) {
-  if(!S.mapBounds){S.mapBounds={minLat:lat,maxLat:lat,minLon:lon,maxLon:lon};return}
-  if(lat<S.mapBounds.minLat) S.mapBounds.minLat=lat;
-  if(lat>S.mapBounds.maxLat) S.mapBounds.maxLat=lat;
-  if(lon<S.mapBounds.minLon) S.mapBounds.minLon=lon;
-  if(lon>S.mapBounds.maxLon) S.mapBounds.maxLon=lon;
-}
-
-function llToCanvas(lat,lon) {
-  const canvas=document.getElementById('track-canvas');
-  const pad=44, b=S.mapBounds;
-  const latR=b.maxLat-b.minLat||0.0001;
-  const lonR=b.maxLon-b.minLon||0.0001;
-  const scale=Math.min((canvas.width-pad*2)/lonR,(canvas.height-pad*2)/latR);
-  const offX=(canvas.width-lonR*scale)/2;
-  const offY=(canvas.height-latR*scale)/2;
-  return {x:offX+(lon-b.minLon)*scale, y:canvas.height-offY-(lat-b.minLat)*scale};
-}
-
-function drawMap() {
-  const canvas=document.getElementById('track-canvas');
-  const ctx=canvas.getContext('2d');
-  const area=document.getElementById('map-area');
-  if(canvas.width!==area.clientWidth||canvas.height!==area.clientHeight){
-    canvas.width=area.clientWidth; canvas.height=area.clientHeight;
-  }
-  ctx.fillStyle='#0a0a0b'; ctx.fillRect(0,0,canvas.width,canvas.height);
-  if(S.trackPoints.length<2) return;
-
-  // Full track (dark)
-  ctx.beginPath(); ctx.strokeStyle='#222230'; ctx.lineWidth=10; ctx.lineCap='round'; ctx.lineJoin='round';
-  const fp=llToCanvas(S.trackPoints[0].lat,S.trackPoints[0].lon);
-  ctx.moveTo(fp.x,fp.y);
-  S.trackPoints.forEach(pt=>{const p=llToCanvas(pt.lat,pt.lon);ctx.lineTo(p.x,p.y)});
-  ctx.stroke();
-
-  // Centre line
-  ctx.beginPath(); ctx.strokeStyle='#3a3a55'; ctx.lineWidth=2;
-  ctx.moveTo(fp.x,fp.y);
-  S.trackPoints.forEach(pt=>{const p=llToCanvas(pt.lat,pt.lon);ctx.lineTo(p.x,p.y)});
-  ctx.stroke();
-
-  // Current lap trail (last 80 pts, yellow fading)
-  if (S.trackPoints.length>1) {
-    const n=Math.min(S.trackPoints.length,80);
-    const si=S.trackPoints.length-n;
-    ctx.beginPath(); ctx.lineWidth=3; ctx.lineCap='round'; ctx.lineJoin='round';
-    // Use gradient opacity
-    for(let i=si;i<S.trackPoints.length-1;i++){
-      const alpha=(i-si)/n;
-      ctx.strokeStyle=`rgba(232,255,71,${alpha*0.7})`;
-      const a=llToCanvas(S.trackPoints[i].lat,S.trackPoints[i].lon);
-      const b=llToCanvas(S.trackPoints[i+1].lat,S.trackPoints[i+1].lon);
-      ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y); ctx.stroke();
-    }
-  }
-
-  // Start/finish line
-  if(S.lineP1&&S.lineP2){
-    const lp1=llToCanvas(S.lineP1.lat,S.lineP1.lon);
-    const lp2=llToCanvas(S.lineP2.lat,S.lineP2.lon);
-    ctx.beginPath(); ctx.strokeStyle='#e8ff47'; ctx.lineWidth=3; ctx.setLineDash([7,5]);
-    ctx.moveTo(lp1.x,lp1.y); ctx.lineTo(lp2.x,lp2.y); ctx.stroke(); ctx.setLineDash([]);
-    const mid=llToCanvas(S.line.lat,S.line.lon);
-    ctx.fillStyle='#e8ff47'; ctx.font='bold 11px "Barlow Condensed"'; ctx.textAlign='center';
-    ctx.fillText('S/F',mid.x,mid.y-9);
-  }
-
-  // Auto sector lines
-  if(S.autoSectors){
-    const sColors=['#47aaff','#b47fff'];
-    const sLabels=['S1/S2','S2/S3'];
-    S.autoSectors.forEach((sec,i)=>{
-      const sp1=llToCanvas(sec.p1.lat,sec.p1.lon);
-      const sp2=llToCanvas(sec.p2.lat,sec.p2.lon);
-      ctx.beginPath(); ctx.strokeStyle=sColors[i]; ctx.lineWidth=2.5; ctx.setLineDash([5,4]);
-      ctx.moveTo(sp1.x,sp1.y); ctx.lineTo(sp2.x,sp2.y); ctx.stroke(); ctx.setLineDash([]);
-      const mid=llToCanvas(sec.centre.lat,sec.centre.lon);
-      ctx.fillStyle=sColors[i]; ctx.font='bold 10px "Barlow Condensed"'; ctx.textAlign='center';
-      ctx.fillText(sLabels[i],mid.x,mid.y-8);
-    });
-  }
-
-  // Sector colour zones on track (subtle tint)
-  if(S.autoSectors&&S.trackPoints.length>10){
-    const totalPts=S.trackPoints.length;
-    const zoneColors=['rgba(71,170,255,0.12)','rgba(180,127,255,0.12)','rgba(57,255,133,0.12)'];
-    // Estimate sector boundaries by distance
-    const cumD=[0];
-    for(let i=1;i<S.trackPoints.length;i++) cumD.push(cumD[i-1]+distM(S.trackPoints[i-1],S.trackPoints[i]));
-    const total=cumD[cumD.length-1];
-    if(total>0){
-      const splitDists=[S.autoSectors[0].distFromStart||total/3, S.autoSectors[1].distFromStart||total*2/3];
-      let zone=0;
-      S.trackPoints.forEach((pt,i)=>{
-        if(zone<2&&cumD[i]>splitDists[zone]) zone++;
-        const p=llToCanvas(pt.lat,pt.lon);
-        ctx.fillStyle=zoneColors[zone];
-        ctx.beginPath(); ctx.arc(p.x,p.y,5,0,Math.PI*2); ctx.fill();
-      });
-    }
-  }
-}
-
-function updateCarDot(lat,lon){
-  const car=document.getElementById('car-dot');
-  if(!S.mapBounds||S.trackPoints.length<2){car.style.display='none';return}
-  car.style.display='block';
-  const canvas=document.getElementById('track-canvas');
-  const p=llToCanvas(lat,lon);
-  car.style.left=(p.x/canvas.width*100)+'%';
-  car.style.top=(p.y/canvas.height*100)+'%';
-  if(S.pos.heading!=null&&!isNaN(S.pos.heading)){
-    car.style.transform=`translate(-50%,-50%) rotate(${S.pos.heading}deg)`;
-  }
-}
-
-// ═══════════════════════════════════════════════
 // PERSIST
 // ═══════════════════════════════════════════════
 function saveState(){
-  localStorage.setItem('lf3_line',JSON.stringify({
-    line:S.line,p1:S.lineP1,p2:S.lineP2,
-    autoSectors:S.autoSectors
+  localStorage.setItem('lf4_line',JSON.stringify({
+    line:S.line,p1:S.lineP1,p2:S.lineP2,autoSectors:S.autoSectors
   }));
 }
 function loadState(){
   try{
-    const d=JSON.parse(localStorage.getItem('lf3_line'));
-    if(d){
-      S.line=d.line; S.lineP1=d.p1; S.lineP2=d.p2;
-      S.autoSectors=d.autoSectors||null;
-      return true;
-    }
+    const d=JSON.parse(localStorage.getItem('lf4_line'));
+    if(d){S.line=d.line;S.lineP1=d.p1;S.lineP2=d.p2;S.autoSectors=d.autoSectors||null;return true;}
   }catch(e){}
   return false;
 }
 function saveLaps(){
   if(S.laps.length>0){
-    localStorage.setItem('lf3_session',JSON.stringify({
+    localStorage.setItem('lf4_session',JSON.stringify({
       laps:S.laps,bestMs:S.bestLapMs,best:S.bestLap,
       sectorBest:S.sectorBest,date:new Date().toISOString()
     }));
@@ -937,8 +833,6 @@ function saveLaps(){
 function buildResults(){
   document.getElementById('res-best').textContent=S.bestLap||'—';
   document.getElementById('res-summary').textContent=`${S.laps.length} LAPS · ${new Date().toLocaleDateString()}`;
-
-  // Best sectors
   const secDiv=document.getElementById('res-sectors');
   if(S.sectorBest.some(Boolean)){
     secDiv.style.display='grid';
@@ -947,16 +841,12 @@ function buildResults(){
         <div class="res-sec-label">${s} Best</div>
         <div class="res-sec-time">${fmtTime(S.sectorBest[i])}</div>
       </div>`).join('');
-  } else {
-    secDiv.style.display='none';
-  }
-
+  } else { secDiv.style.display='none'; }
   const grid=document.getElementById('res-grid');
   grid.innerHTML='';
   S.laps.forEach(l=>{
     const isBest=S.bestLapMs===l.ms;
-    const dStr=fmtDelta(l.delta);
-    const dCls=l.delta==null?'':(l.delta>0?'pos':'neg');
+    const dStr=fmtDelta(l.delta),dCls=l.delta==null?'':(l.delta>0?'pos':'neg');
     const row=document.createElement('div');
     row.className='result-row'+(isBest?' best':'');
     row.innerHTML=`<span class="r-num">${l.num}</span><span class="r-time">${l.time}</span><span class="r-delta ${dCls}">${dStr}</span><span class="r-spd">${l.speed!=null?l.speed+' km/h':''}</span>`;
@@ -966,17 +856,15 @@ function buildResults(){
 
 function loadAndShowResults(){
   try{
-    const d=JSON.parse(localStorage.getItem('lf3_session'));
+    const d=JSON.parse(localStorage.getItem('lf4_session'));
     if(!d||!d.laps.length){alert('No saved session.');return}
-    S.laps=d.laps; S.bestLapMs=d.bestMs; S.bestLap=d.best;
-    S.sectorBest=d.sectorBest||[null,null,null];
-    buildResults(); showScreen('results');
+    S.laps=d.laps;S.bestLapMs=d.bestMs;S.bestLap=d.best;S.sectorBest=d.sectorBest||[null,null,null];
+    buildResults();showScreen('results');
   }catch(e){alert('No saved session.');}
 }
-
 function clearResults(){
-  localStorage.removeItem('lf3_session');
-  S.laps=[]; S.bestLap=null; S.bestLapMs=null; S.sectorBest=[null,null,null];
+  localStorage.removeItem('lf4_session');
+  S.laps=[];S.bestLap=null;S.bestLapMs=null;S.sectorBest=[null,null,null];
   showScreen('home');
 }
 
@@ -990,13 +878,7 @@ function showScreen(id){
 
 window.addEventListener('load',()=>{
   startGPS();
-  if(loadState()&&S.line){
-    document.getElementById('btn-quick').disabled=false;
-  }
-});
-
-window.addEventListener('resize',()=>{
-  if(S.active){initCanvas();drawMap();}
+  if(loadState()&&S.line) document.getElementById('btn-quick').disabled=false;
 });
 </script>
 </body>
